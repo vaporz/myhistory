@@ -37,7 +37,8 @@ public class NewsController {
 	 * 显示事件提交页
 	 */
 	@Get("news/commit")
-	public String showCommitNews() {
+	public String showCommitNews(Invocation inv, String msg) {
+		inv.addModel("msg", StringUtils.defaultString(msg));
 		return "showcommitnews";
 	}
 
@@ -53,7 +54,7 @@ public class NewsController {
 			long newsTime = format.parse(newTimeStr).getTime();
 			newsService.commitNews(title, content, url, newsTime, keywordSet);
 		}
-		return "showcommitnews";
+		return showCommitNews(inv, "操作成功");
 	}
 
 	private Set<String> getKeywordSet(String keywords) {
@@ -120,5 +121,24 @@ public class NewsController {
 			newsService.attachKeywordsForNews(newsId, keywordSet);
 		}
 		return showNews(inv, newsId);
+	}
+
+	@Get("keyword/merge")
+	public String showMergeKeyword(Invocation inv, String msg) {
+		inv.addModel("msg", StringUtils.defaultString(msg));
+		return "mergekeyword";
+	}
+
+	/**
+	 * 合并关键字
+	 */
+	@Post("keyword/merge")
+	public String mergeKeywords(Invocation inv, @Param("keyword") String keyword, @Param("target") String target)
+			throws BadRequestException {
+		if (StringUtils.isBlank(keyword) || StringUtils.isBlank(target)) {
+			throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+		}
+		newsService.mergeKerword(keyword, target);
+		return showMergeKeyword(inv, "操作成功");
 	}
 }

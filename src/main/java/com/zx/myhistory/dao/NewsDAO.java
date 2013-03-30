@@ -34,7 +34,7 @@ public interface NewsDAO {
 	public void insertKeywordNews(@SQLParam("keywordId") long keywordId, @SQLParam("newsId") long newsId,
 			@SQLParam("newsTime") long newsTime);
 
-	@SQL("SELECT keyword_id, keyword, keyword_lowercase, create_time FROM keyword ORDER BY create_time DESC LIMIT 200")
+	@SQL("SELECT keyword_id, keyword, keyword_lowercase, alias_id, create_time FROM keyword ORDER BY create_time DESC LIMIT 200")
 	public List<Keyword> getKeywords();
 
 	@SQL("SELECT news_id, news_time FROM keyword_news WHERE keyword_id=:keywordId AND news_time<:newsTime ORDER BY news_time DESC LIMIT :limit")
@@ -47,12 +47,31 @@ public interface NewsDAO {
 	@SQL("SELECT news_id, title, content, url, news_time, create_time FROM news WHERE news_id=:newsId")
 	public News getOneNewsById(@SQLParam("newsId") long newsId);
 
-	@SQL("SELECT keyword_id, keyword, keyword_lowercase, create_time FROM keyword WHERE keyword_lowercase IN (:keywords)")
+	@SQL("SELECT keyword_id, keyword, keyword_lowercase, alias_id, create_time FROM keyword WHERE keyword_lowercase IN (:keywords)")
 	public List<Keyword> getKeywordByName(@SQLParam("keywords") Set<String> keywords);
+
+	@SQL("SELECT keyword_id, keyword, keyword_lowercase, alias_id, create_time FROM keyword WHERE keyword_lowercase=:keywordLowercase")
+	public Keyword getKeywordByName(@SQLParam("keywordLowercase") String keywordLowercase);
 
 	@SQL("SELECT news_id, title, content, url, news_time, create_time FROM news WHERE news_id IN (:newsIds) ORDER BY news_time DESC")
 	public List<News> getNewsByIds(@SQLParam("newsIds") Set<Long> newsIds);
 
-	@SQL("SELECT keyword_id, keyword, keyword_lowercase, create_time FROM keyword WHERE keyword_id=:keywordId")
+	@SQL("SELECT keyword_id, keyword, keyword_lowercase, alias_id, create_time FROM keyword WHERE keyword_id=:keywordId")
 	public Keyword getKeywordById(@SQLParam("keywordId") long keywordId);
+
+	@SQL("UPDATE news_keyword SET keyword_id=:targetId WHERE news_id=:newsId AND keyword_id=:keywordId")
+	public void updateKeywordIdForNewsKeyword(@SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId,
+			@SQLParam("targetId") long targetId);
+
+	@SQL("DELETE FROM news_keyword WHERE news_id=:newsId AND keyword_id=:keywordId")
+	public void deleteNewsFromNewsKeyword(@SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId);
+
+	@SQL("DELETE FROM keyword_news WHERE keyword_id=:keywordId")
+	public void deleteNewsByKeywordId(@SQLParam("keywordId") long keywordId);
+
+	@SQL("UPDATE keyword SET alias_id=:targetId WHERE keyword_id=:keywordId")
+	public void aliasKeyword(@SQLParam("keywordId") long duplicatedKeywordId, @SQLParam("targetId") long targetId);
+
+	@SQL("UPDATE keyword SET alias_id=:targetId WHERE alias_id=:oldTargetId")
+	public void redirectAlias(@SQLParam("oldTargetId") long oldTargetId, @SQLParam("targetId") long targetId);
 }

@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS keyword (
        keyword_id bigint(20) unsigned not null primary key AUTO_INCREMENT,
        keyword_lowercase varchar(128) not null,
        keyword varchar(128) not null,
+       alias_id bigint(20) unsigned not null default 0,
        create_time bigint(20) not null default 0,
     UNIQUE INDEX (keyword) 
    ) engine=InnoDB default charset=utf8;

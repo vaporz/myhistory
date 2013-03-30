@@ -10,6 +10,7 @@
 </head>
 <body>
   <%@ include file="header.jsp" %>
+  ${msg}<br>
 <form method="post" action="/news/commit">
 新闻URL：<input type="text" name="url"/>(可选，如果不填会被认为是没有正式来源的不靠谱消息)<br>
 标题：<input type="text" name="title"/><br>
@@ -20,3 +21,7 @@
 </form>
 </body>
 </html>
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!doctype html>
+<html>
