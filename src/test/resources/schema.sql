@@ -31,8 +31,7 @@ CREATE TABLE news (
        content varchar(4096) not null,
        url varchar(2046) not null default '',
        news_time bigint(20) not null,
-       create_time bigint(20) not null default 0,
-    UNIQUE INDEX (url) 
+       create_time bigint(20) not null default 0
    ) ;
 CREATE TABLE id_index (
 	id bigint unsigned auto_increment primary key

@@ -60,9 +60,9 @@ public interface NewsDAO {
     @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE keyword_id=:keywordId")
     public Keyword getKeywordById(@SQLParam("keywordId") long keywordId);
 
-    @SQL("UPDATE news_keyword SET keyword_id=:targetId WHERE news_id=:newsId AND keyword_id=:keywordId")
-    public void updateKeywordIdForNewsKeyword(@SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId,
-        @SQLParam("targetId") long targetId);
+    @SQL("UPDATE news_keyword SET keyword_id=:targetId, keyword=:keyword, keyword_lowercase=:keywordLowercase WHERE news_id=:newsId AND keyword_id=:keywordId")
+    public void updateKeywordForNewsKeyword(@SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId,
+        @SQLParam("targetId") long targetId, @SQLParam("keyword") String keyword, @SQLParam("keywordLowercase") String keywordLowercase);
 
     @SQL("DELETE FROM news_keyword WHERE news_id=:newsId AND keyword_id=:keywordId")
     public void deleteNewsFromNewsKeyword(@SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId);

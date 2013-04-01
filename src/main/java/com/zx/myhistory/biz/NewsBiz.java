@@ -38,6 +38,10 @@ public class NewsBiz {
         }
     }
 
+    public void insertKeywordNews(long keywordId, long newsId, long newsTime) {
+        newsDAO.insertKeywordNews(keywordId, newsId, newsTime);
+    }
+
     public long createKeyword(String keyword) {
         long id = newsDAO.getAndIncrId();
         newsDAO.insertKeyword(id, keyword, keyword.toLowerCase(), System.currentTimeMillis());
@@ -107,8 +111,8 @@ public class NewsBiz {
         newsDAO.redirectAlias(oldTargetId, targetId);
     }
 
-    public void updateKeywordIdForNewsKeyword(long newsId, long keywordId, long targetId) {
-        newsDAO.updateKeywordIdForNewsKeyword(newsId, keywordId, targetId);
+    public void updateKeywordForNewsKeyword(long newsId, long keywordId, long targetId, String keyword, String keywordLowercase) {
+        newsDAO.updateKeywordForNewsKeyword(newsId, keywordId, targetId, keyword, keywordLowercase);
     }
 
     public void voteKeywordHot(long keywordId, int delta) {

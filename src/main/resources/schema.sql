@@ -31,8 +31,7 @@ CREATE TABLE IF NOT EXISTS news (
        content varchar(4096) not null,
        url varchar(2046) not null default '',
        news_time bigint(20) not null,
-       create_time bigint(20) not null default 0,
-    UNIQUE INDEX (url) 
+       create_time bigint(20) not null default 0
    ) engine=InnoDB default charset=utf8;
 
 CREATE TABLE IF NOT EXISTS id_index (

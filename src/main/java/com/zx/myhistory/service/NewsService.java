@@ -39,6 +39,13 @@ public class NewsService {
     }
 
     public Keyword getKeywordById(long keywordId) {
+        return newsBiz.getKeywordById(keywordId);
+    }
+
+    /**
+     * 如果aliasId大于0，会一直找到最后一个aliasId不大于0的keyword
+     */
+    public Keyword getTrueKeywordById(long keywordId) {
         Keyword keyword = newsBiz.getKeywordById(keywordId);
         while (keyword.getAliasId() > 0) {
             keyword = newsBiz.getKeywordById(keyword.getAliasId());
@@ -108,7 +115,9 @@ public class NewsService {
             newsBiz.deleteNewsFromNewsKeyword(item.getNewsId(), keywordObj.getKeywordId());
         }
         for (News item : newsTobeUpdated) {
-            newsBiz.updateKeywordIdForNewsKeyword(item.getNewsId(), keywordObj.getKeywordId(), targetObj.getKeywordId());
+            newsBiz.updateKeywordForNewsKeyword(item.getNewsId(), keywordObj.getKeywordId(), targetObj.getKeywordId(),
+                targetObj.getKeyword(), targetObj.getKeywordLowercase());
+            newsBiz.insertKeywordNews(targetObj.getKeywordId(), item.getNewsId(), item.getNewsTime());
         }
         newsBiz.deleteNewsByKeywordId(keywordObj.getKeywordId());
         newsBiz.aliasKeyword(keywordObj.getKeywordId(), targetObj.getKeywordId());

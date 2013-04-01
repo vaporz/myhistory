@@ -6,7 +6,7 @@ import net.paoding.rose.jade.annotation.SQL;
 import net.paoding.rose.jade.annotation.SQLParam;
 
 @DAO
-public interface NewsTestDAO extends NewsDAO {
+public interface NewsTestDAO {
 
     @SQL("INSERT INTO keyword (keyword_id, keyword, keyword_lowercase, create_time)VALUES(:keywordId, :keyword, :keywordLowercase, :createTime)")
     public void insertKeyword(@SQLParam("keywordId") long keywordId, @SQLParam("keyword") String keyword,

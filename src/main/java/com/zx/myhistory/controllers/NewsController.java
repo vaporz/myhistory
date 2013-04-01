@@ -92,8 +92,8 @@ public class NewsController {
         if (limit <= 0 || newsTime < 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
-        Keyword keyword = newsService.getKeywordById(keywordId);
-        List<News> list = newsService.getNewsByKeyword(keywordId, newsTime, limit);
+        Keyword keyword = newsService.getTrueKeywordById(keywordId);
+        List<News> list = newsService.getNewsByKeyword(keyword.getKeywordId(), newsTime, limit);
         inv.addModel("keyword", keyword);
         inv.addModel("news", list);
         return "news";
@@ -142,6 +142,9 @@ public class NewsController {
         return showMergeKeyword(inv, "操作成功");
     }
 
+    /**
+     * 给关键字关注度加一
+     */
     @Get("keyword/vote/hot")
     public String voteKeywordHot(Invocation inv, @Param("keywordId") long keywordId) throws BadRequestException {
         if (keywordId <= 0) {
