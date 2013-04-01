@@ -1,7 +1,7 @@
 
 package com.zx.myhistory.biz;
 
-import com.zx.myhistory.dao.NewsDAO;
+import com.zx.myhistory.dao.NewsTestDAO;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
 
@@ -17,7 +17,7 @@ import java.util.Set;
 @Service
 public class NewsBiz {
     @Autowired
-    private NewsDAO newsDAO;
+    private NewsTestDAO newsDAO;
 
     public long commitNews(String title, String content, String url, long newsTime) {
         return newsDAO.commitNews(title, content, url, newsTime, System.currentTimeMillis());
