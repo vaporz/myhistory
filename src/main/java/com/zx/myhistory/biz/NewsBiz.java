@@ -20,7 +20,9 @@ public class NewsBiz {
     private NewsDAO newsDAO;
 
     public long commitNews(String title, String content, String url, long newsTime) {
-        return newsDAO.commitNews(title, content, url, newsTime, System.currentTimeMillis());
+        long id = newsDAO.getAndIncrId();
+        newsDAO.commitNews(id, title, content, url, newsTime, System.currentTimeMillis());
+        return id;
     }
 
     public void commitNewsKeyword(long newsId, Set<Keyword> keywords) {
@@ -36,8 +38,14 @@ public class NewsBiz {
         }
     }
 
+    public void insertKeywordNews(long keywordId, long newsId, long newsTime) {
+        newsDAO.insertKeywordNews(keywordId, newsId, newsTime);
+    }
+
     public long createKeyword(String keyword) {
-        return newsDAO.insertKeyword(keyword, keyword.toLowerCase(), System.currentTimeMillis());
+        long id = newsDAO.getAndIncrId();
+        newsDAO.insertKeyword(id, keyword, keyword.toLowerCase(), System.currentTimeMillis());
+        return id;
     }
 
     public List<Keyword> getKeywords() {
@@ -50,7 +58,8 @@ public class NewsBiz {
         for (News news : newsIds) {
             ids.add(news.getNewsId());
         }
-        return newsDAO.getNewsByIds(ids);// TODO use redis to cache News object, map: newsId, key, value
+        return newsDAO.getNewsByIds(ids);// TODO use redis to cache News object,
+                                         // map: newsId, key, value
     }
 
     public News getOneNewsById(long newsId) {
@@ -76,5 +85,41 @@ public class NewsBiz {
 
     public List<Keyword> getKeywordsByNewsId(long newsId) {
         return newsDAO.getKeywordsByNewsId(newsId);
+    }
+
+    public Keyword getKeywordByName(String keywordLowercase) {
+        return newsDAO.getKeywordByName(keywordLowercase);
+    }
+
+    public List<News> getNewsIdByKeyword(long keywordId, long newsTime, int limit) {
+        return newsDAO.getNewsIdByKeyword(keywordId, newsTime, limit);
+    }
+
+    public void deleteNewsFromNewsKeyword(long newsId, long keywordId) {
+        newsDAO.deleteNewsFromNewsKeyword(newsId, keywordId);
+    }
+
+    public void deleteNewsByKeywordId(long keywordId) {
+        newsDAO.deleteNewsByKeywordId(keywordId);
+    }
+
+    public void aliasKeyword(long duplicatedKeywordId, long targetId) {
+        newsDAO.aliasKeyword(duplicatedKeywordId, targetId);
+    }
+
+    public void redirectAlias(long oldTargetId, long targetId) {
+        newsDAO.redirectAlias(oldTargetId, targetId);
+    }
+
+    public void updateKeywordForNewsKeyword(long newsId, long keywordId, long targetId, String keyword, String keywordLowercase) {
+        newsDAO.updateKeywordForNewsKeyword(newsId, keywordId, targetId, keyword, keywordLowercase);
+    }
+
+    public void voteKeywordHot(long keywordId, int delta) {
+        newsDAO.voteKeywordHot(keywordId, delta);
+    }
+
+    public Long getAndIncrId() {
+        return newsDAO.getAndIncrId();
     }
 }

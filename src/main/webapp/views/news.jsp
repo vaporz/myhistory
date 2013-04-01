@@ -11,10 +11,10 @@
 </head>
 <body>
   <%@ include file="header.jsp" %>
-关键字：${keyword.keyword}<br>
+关键字：${keyword.keyword}&nbsp;&nbsp;|&nbsp;&nbsp;热度：${keyword.hot}&nbsp;&nbsp;|&nbsp;&nbsp;<a href="/keyword/vote/hot?keywordId=${keyword.keywordId}">点击关注</a><br>
 事件时间&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标题<br>
 <c:forEach var="item" items="${news}" varStatus="status">
-<fmt:formatDate pattern="yyyy/MM/dd hh:mm:ss" value="${item.newsTime}" />&nbsp;&nbsp;&nbsp;<a href="/news/${item.newsId}">${item.title}</a><br>
+<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${item.newsTime}" />&nbsp;&nbsp;&nbsp;<a href="/news/${item.newsId}">${item.title}</a><br>
 </c:forEach>
 </body>
 </html>
