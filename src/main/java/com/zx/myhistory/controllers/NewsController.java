@@ -141,4 +141,13 @@ public class NewsController {
         newsService.mergeKerword(keyword, target);
         return showMergeKeyword(inv, "操作成功");
     }
+
+    @Get("keyword/vote/hot")
+    public String voteKeywordHot(Invocation inv, @Param("keywordId") long keywordId) throws BadRequestException {
+        if (keywordId <= 0) {
+            throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+        }
+        newsService.voteKeywordHot(keywordId);
+        return listNewsByKeyword(inv, keywordId, 0, 30);
+    }
 }

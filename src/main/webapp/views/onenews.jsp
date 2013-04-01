@@ -13,7 +13,7 @@
   <%@ include file="header.jsp" %>
 ${item.title}<br>
 标题：${news.title}<br>
-事件时间：<fmt:formatDate pattern="yyyy/MM/dd hh:mm:ss" value="${news.newsTime}" /><br>
+事件时间：<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${news.newsTime}" /><br>
 来源：<a target="_blank" href="${news.url}">${news.url}</a><br>
 相关关键字：
 <c:forEach var="item" items="${keywords}" varStatus="status">

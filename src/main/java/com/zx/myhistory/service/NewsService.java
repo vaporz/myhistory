@@ -114,4 +114,8 @@ public class NewsService {
         newsBiz.aliasKeyword(keywordObj.getKeywordId(), targetObj.getKeywordId());
         newsBiz.redirectAlias(keywordObj.getKeywordId(), targetObj.getKeywordId());
     }
+
+    public void voteKeywordHot(long keywordId) {
+        newsBiz.voteKeywordHot(keywordId, 1);
+    }
 }

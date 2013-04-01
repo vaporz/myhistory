@@ -10,6 +10,7 @@
 </head>
 <body>
   <%@ include file="header.jsp" %>
+按热度排序：<br>
 <c:forEach var="item" items="${keywords}" varStatus="status">
 <a href="/keyword/${item.keywordId}/news?newsTime=0&limit=30">${item.keyword}</a>
 <c:if test="${item.aliasId>0}">

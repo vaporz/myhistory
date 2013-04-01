@@ -106,4 +106,9 @@ public class NewsBiz {
     public void updateKeywordIdForNewsKeyword(long newsId, long keywordId, long targetId) {
         newsDAO.updateKeywordIdForNewsKeyword(newsId, keywordId, targetId);
     }
+
+    public void voteKeywordHot(long keywordId, int delta) {
+        newsDAO.voteKeywordHot(keywordId, delta);
+    }
+
 }
