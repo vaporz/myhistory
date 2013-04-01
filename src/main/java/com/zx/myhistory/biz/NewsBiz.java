@@ -1,7 +1,7 @@
 
 package com.zx.myhistory.biz;
 
-import com.zx.myhistory.dao.NewsTestDAO;
+import com.zx.myhistory.dao.NewsDAO;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
 
@@ -17,10 +17,12 @@ import java.util.Set;
 @Service
 public class NewsBiz {
     @Autowired
-    private NewsTestDAO newsDAO;
+    private NewsDAO newsDAO;
 
     public long commitNews(String title, String content, String url, long newsTime) {
-        return newsDAO.commitNews(title, content, url, newsTime, System.currentTimeMillis());
+        long id = newsDAO.getAndIncrId();
+        newsDAO.commitNews(id, title, content, url, newsTime, System.currentTimeMillis());
+        return id;
     }
 
     public void commitNewsKeyword(long newsId, Set<Keyword> keywords) {
@@ -37,7 +39,9 @@ public class NewsBiz {
     }
 
     public long createKeyword(String keyword) {
-        return newsDAO.insertKeyword(keyword, keyword.toLowerCase(), System.currentTimeMillis());
+        long id = newsDAO.getAndIncrId();
+        newsDAO.insertKeyword(id, keyword, keyword.toLowerCase(), System.currentTimeMillis());
+        return id;
     }
 
     public List<Keyword> getKeywords() {
@@ -111,4 +115,7 @@ public class NewsBiz {
         newsDAO.voteKeywordHot(keywordId, delta);
     }
 
+    public Long getAndIncrId() {
+        return newsDAO.getAndIncrId();
+    }
 }

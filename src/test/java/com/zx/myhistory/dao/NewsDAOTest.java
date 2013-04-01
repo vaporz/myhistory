@@ -48,7 +48,8 @@ public class NewsDAOTest {
 
     @Test
     public void testGetAndIncrItemId() {
-        newsTestDAO.insertKeyword("ABC", "abc", System.currentTimeMillis());
+        long id = newsTestDAO.getAndIncrId();
+        newsTestDAO.insertKeyword(id, "ABC", "abc", System.currentTimeMillis());
         Keyword keyword = newsTestDAO.getKeywordByName("abc");
         Assert.assertEquals("abc", keyword.getKeywordLowercase());
     }

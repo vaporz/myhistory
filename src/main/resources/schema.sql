@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS keyword_news (
    ) engine=InnoDB default charset=utf8;
 
 CREATE TABLE IF NOT EXISTS keyword (
-       keyword_id bigint(20) unsigned not null primary key AUTO_INCREMENT,
+       keyword_id bigint(20) unsigned not null primary key,
        keyword_lowercase varchar(128) not null,
        keyword varchar(128) not null,
        alias_id bigint(20) unsigned not null default 0,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS keyword (
    ) engine=InnoDB default charset=utf8;
 
 CREATE TABLE IF NOT EXISTS news (
-       news_id bigint(20) unsigned not null primary key AUTO_INCREMENT,
+       news_id bigint(20) unsigned not null primary key,
        title varchar(256) not null,
        content varchar(4096) not null,
        url varchar(2046) not null default '',
@@ -34,3 +34,7 @@ CREATE TABLE IF NOT EXISTS news (
        create_time bigint(20) not null default 0,
     UNIQUE INDEX (url) 
    ) engine=InnoDB default charset=utf8;
+
+CREATE TABLE IF NOT EXISTS id_index (
+	id bigint unsigned auto_increment primary key
+) engine=InnoDB default charset=utf8;

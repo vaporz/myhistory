@@ -17,15 +17,13 @@ public interface NewsDAO {
 
     final String KEYWORD_COLUMNS = " keyword_id, keyword, keyword_lowercase, alias_id, hot, create_time ";
 
-    @SQL("INSERT INTO news (title, content, url, news_time, create_time)VALUES(:title, :content, :url, :newsTime, :createTime)")
-    @ReturnGeneratedKeys
-    public Long commitNews(@SQLParam("title") String title, @SQLParam("content") String content, @SQLParam("url") String url,
-        @SQLParam("newsTime") long newsTime, @SQLParam("createTime") long createTime);
+    @SQL("INSERT INTO news (news_id, title, content, url, news_time, create_time)VALUES(:newsId, :title, :content, :url, :newsTime, :createTime)")
+    public void commitNews(@SQLParam("newsId") long newsId, @SQLParam("title") String title, @SQLParam("content") String content,
+        @SQLParam("url") String url, @SQLParam("newsTime") long newsTime, @SQLParam("createTime") long createTime);
 
-    @SQL("INSERT INTO keyword (keyword, keyword_lowercase, create_time)VALUES(:keyword, :keywordLowercase, :createTime) ON DUPLICATE KEY UPDATE keyword=:keyword")
-    @ReturnGeneratedKeys
-    public Long insertKeyword(@SQLParam("keyword") String keyword, @SQLParam("keywordLowercase") String keywordLowercase,
-        @SQLParam("createTime") long createTime);
+    @SQL("INSERT INTO keyword (keyword_id, keyword, keyword_lowercase, create_time)VALUES(:keywordId, :keyword, :keywordLowercase, :createTime) ON DUPLICATE KEY UPDATE keyword=:keyword")
+    public void insertKeyword(@SQLParam("keywordId") long keywordId, @SQLParam("keyword") String keyword,
+        @SQLParam("keywordLowercase") String keywordLowercase, @SQLParam("createTime") long createTime);
 
     @SQL("INSERT INTO news_keyword (news_id, keyword_id, keyword, keyword_lowercase, create_time)VALUES(:newsId, :keywordId, :keyword, :keywordLowercase, :createTime)"
             + " ON DUPLICATE KEY UPDATE keyword_id=:keywordId")
@@ -80,4 +78,8 @@ public interface NewsDAO {
 
     @SQL("UPDATE keyword SET hot=hot+:delta WHERE keyword_id=:keywordId")
     public void voteKeywordHot(@SQLParam("keywordId") long keywordId, @SQLParam("delta") int delta);
+
+    @SQL("INSERT INTO id_index ()VALUES()")
+    @ReturnGeneratedKeys
+    public Long getAndIncrId();
 }
