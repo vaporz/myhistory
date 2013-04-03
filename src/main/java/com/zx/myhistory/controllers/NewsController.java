@@ -6,6 +6,7 @@ import com.zx.myhistory.model.ErrorCode;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.service.NewsService;
+import com.zx.myhistory.util.CookieManager;
 
 import net.paoding.rose.web.Invocation;
 import net.paoding.rose.web.annotation.Param;
@@ -150,7 +151,12 @@ public class NewsController {
         if (keywordId <= 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
+        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vk" + keywordId);
+        if (StringUtils.isNotBlank(token)) {
+            return "@投过了";
+        }
         newsService.voteKeywordHot(keywordId);
+        CookieManager.getInstance().saveCookie(inv.getResponse(), "vk" + keywordId, "1", -1, "/", ".test.com");
         return listNewsByKeyword(inv, keywordId, 0, 30);
     }
 }
