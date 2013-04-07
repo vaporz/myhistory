@@ -7,6 +7,8 @@ public class News {
     private String content;
     private String url;
     private long newsTime;
+    private int truth;
+    private int fake;
     private long createTime;
 
     public long getNewsId() {
@@ -47,6 +49,22 @@ public class News {
 
     public void setNewsTime(long newsTime) {
         this.newsTime = newsTime;
+    }
+
+    public int getTruth() {
+        return truth;
+    }
+
+    public void setTruth(int truth) {
+        this.truth = truth;
+    }
+
+    public int getFake() {
+        return fake;
+    }
+
+    public void setFake(int fake) {
+        this.fake = fake;
     }
 
     public long getCreateTime() {

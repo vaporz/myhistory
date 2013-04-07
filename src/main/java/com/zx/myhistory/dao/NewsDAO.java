@@ -15,15 +15,15 @@ import java.util.Set;
 @DAO
 public interface NewsDAO {
 
-    final String KEYWORD_COLUMNS = " keyword_id, keyword, keyword_lowercase, alias_id, hot, create_time ";
+    final String KEYWORD_COLUMNS = " keyword_id, keyword, keyword_lowercase, alias_id, hot, wiki_url, create_time ";
 
     @SQL("INSERT INTO news (news_id, title, content, url, news_time, create_time)VALUES(:newsId, :title, :content, :url, :newsTime, :createTime)")
     public void commitNews(@SQLParam("newsId") long newsId, @SQLParam("title") String title, @SQLParam("content") String content,
         @SQLParam("url") String url, @SQLParam("newsTime") long newsTime, @SQLParam("createTime") long createTime);
 
-    @SQL("INSERT INTO keyword (keyword_id, keyword, keyword_lowercase, create_time)VALUES(:keywordId, :keyword, :keywordLowercase, :createTime) ON DUPLICATE KEY UPDATE keyword=:keyword")
+    @SQL("INSERT INTO keyword (keyword_id, keyword, keyword_lowercase, wiki_url, create_time)VALUES(:keywordId, :keyword, :keywordLowercase, :wikiUrl, :createTime) ON DUPLICATE KEY UPDATE keyword=:keyword")
     public void insertKeyword(@SQLParam("keywordId") long keywordId, @SQLParam("keyword") String keyword,
-        @SQLParam("keywordLowercase") String keywordLowercase, @SQLParam("createTime") long createTime);
+        @SQLParam("keywordLowercase") String keywordLowercase, @SQLParam("wikiUrl") String wikiUrl, @SQLParam("createTime") long createTime);
 
     @SQL("INSERT INTO news_keyword (news_id, keyword_id, keyword, keyword_lowercase, create_time)VALUES(:newsId, :keywordId, :keyword, :keywordLowercase, :createTime)"
             + " ON DUPLICATE KEY UPDATE keyword_id=:keywordId")
@@ -45,7 +45,7 @@ public interface NewsDAO {
     @SQL("SELECT keyword_id, keyword, keyword_lowercase, create_time FROM news_keyword WHERE news_id=:newsId")
     public List<Keyword> getKeywordsByNewsId(@SQLParam("newsId") long newsId);
 
-    @SQL("SELECT news_id, title, content, url, news_time, create_time FROM news WHERE news_id=:newsId")
+    @SQL("SELECT news_id, title, content, url, news_time, truth, fake, create_time FROM news WHERE news_id=:newsId")
     public News getOneNewsById(@SQLParam("newsId") long newsId);
 
     @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE keyword_lowercase IN (:keywords)")
@@ -54,7 +54,7 @@ public interface NewsDAO {
     @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE keyword_lowercase=:keywordLowercase")
     public Keyword getKeywordByName(@SQLParam("keywordLowercase") String keywordLowercase);
 
-    @SQL("SELECT news_id, title, content, url, news_time, create_time FROM news WHERE news_id IN (:newsIds) ORDER BY news_time DESC")
+    @SQL("SELECT news_id, title, content, url, news_time, truth, fake, create_time FROM news WHERE news_id IN (:newsIds) ORDER BY news_time DESC")
     public List<News> getNewsByIds(@SQLParam("newsIds") Set<Long> newsIds);
 
     @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE keyword_id=:keywordId")
@@ -82,4 +82,10 @@ public interface NewsDAO {
     @SQL("INSERT INTO id_index ()VALUES()")
     @ReturnGeneratedKeys
     public Long getAndIncrId();
+
+    @SQL("UPDATE news SET truth=truth+:delta WHERE news_id=:newsId")
+    public void updateNewsTruth(@SQLParam("newsId") long newsId, @SQLParam("delta") int delta);
+
+    @SQL("UPDATE news SET fake=fake+:delta WHERE news_id=:newsId")
+    public void updateNewsFake(@SQLParam("newsId") long newsId, @SQLParam("delta") int delta);
 }

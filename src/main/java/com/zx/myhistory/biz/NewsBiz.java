@@ -44,7 +44,7 @@ public class NewsBiz {
 
     public long createKeyword(String keyword) {
         long id = newsDAO.getAndIncrId();
-        newsDAO.insertKeyword(id, keyword, keyword.toLowerCase(), System.currentTimeMillis());
+        newsDAO.insertKeyword(id, keyword, keyword.toLowerCase(), "", System.currentTimeMillis());
         return id;
     }
 
@@ -121,5 +121,13 @@ public class NewsBiz {
 
     public Long getAndIncrId() {
         return newsDAO.getAndIncrId();
+    }
+
+    public void updateNewsTruth(long newsId, int delta) {
+        newsDAO.updateNewsTruth(newsId, delta);
+    }
+
+    public void updateNewsFake(long newsId, int delta) {
+        newsDAO.updateNewsFake(newsId, delta);
     }
 }

@@ -127,4 +127,12 @@ public class NewsService {
     public void voteKeywordHot(long keywordId) {
         newsBiz.voteKeywordHot(keywordId, 1);
     }
+
+    public void updateNewsTruth(long newsId, int delta) {
+        newsBiz.updateNewsTruth(newsId, delta);
+    }
+
+    public void updateNewsFake(long newsId, int delta) {
+        newsBiz.updateNewsFake(newsId, delta);
+    }
 }

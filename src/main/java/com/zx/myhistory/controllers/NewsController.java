@@ -146,7 +146,7 @@ public class NewsController {
     /**
      * 给关键字关注度加一
      */
-    @Get("keyword/vote/hot")
+    @Get("keyword/{keywordId:[0-9]+}/vote/hot")
     public String voteKeywordHot(Invocation inv, @Param("keywordId") long keywordId) throws BadRequestException {
         if (keywordId <= 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
@@ -158,5 +158,23 @@ public class NewsController {
         newsService.voteKeywordHot(keywordId);
         CookieManager.getInstance().saveCookie(inv.getResponse(), "vk" + keywordId, "1", -1, "/", ".test.com");
         return listNewsByKeyword(inv, keywordId, 0, 30);
+    }
+
+    @Get("news/{newsId:[0-9]+}/vote/truth")
+    public String voteNewsTruth(Invocation inv, @Param("newsId") long newsId) throws BadRequestException {
+        if (newsId <= 0) {
+            throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+        }
+        newsService.updateNewsTruth(newsId, 1);
+        return showNews(inv, newsId);
+    }
+
+    @Get("news/{newsId:[0-9]+}/vote/fake")
+    public String voteNewsFake(Invocation inv, @Param("newsId") long newsId) throws BadRequestException {
+        if (newsId <= 0) {
+            throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+        }
+        newsService.updateNewsFake(newsId, 1);
+        return showNews(inv, newsId);
     }
 }

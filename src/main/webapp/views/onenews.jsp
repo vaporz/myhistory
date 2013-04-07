@@ -11,8 +11,8 @@
 </head>
 <body>
   <%@ include file="header.jsp" %>
-${item.title}<br>
 标题：${news.title}<br>
+投票：<a href="/news/${news.newsId}/vote/truth">这是真的</a>（${news.truth}）/<a href="/news/${news.newsId}/vote/fake">这是造谣</a>（${news.fake}）<br>
 事件时间：<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${news.newsTime}" /><br>
 来源：<a target="_blank" href="${news.url}">${news.url}</a><br>
 相关关键字：

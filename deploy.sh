@@ -1,7 +1,7 @@
 #!/bin/bash
 SERVER=$1
 if [ -z "${SERVER}" ]; then
-        echo "Usage:deploy.sh [ip]";
+        echo "usage : deploy.sh [ip]";
     exit;
 fi
 

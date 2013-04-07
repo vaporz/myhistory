@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS keyword (
        keyword_id bigint(20) unsigned not null primary key,
        keyword_lowercase varchar(128) not null,
        keyword varchar(128) not null,
+       wiki_url varchar(2046) not null default '',
        alias_id bigint(20) unsigned not null default 0,
        hot int(11) not null default 0,
        create_time bigint(20) not null default 0,
@@ -31,6 +32,8 @@ CREATE TABLE IF NOT EXISTS news (
        content varchar(4096) not null,
        url varchar(2046) not null default '',
        news_time bigint(20) not null,
+       truth int(11) not null default 0,
+       fake int(11) not null default 0,
        create_time bigint(20) not null default 0
    ) engine=InnoDB default charset=utf8;
 

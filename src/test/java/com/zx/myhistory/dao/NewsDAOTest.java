@@ -56,7 +56,7 @@ public class NewsDAOTest {
     @Test
     public void testCreateKeyword() {
         long id = newsDAO.getAndIncrId();
-        newsTestDAO.insertKeyword(id, "ABC", "abc", System.currentTimeMillis());
+        newsTestDAO.insertKeyword(id, "ABC", "abc", "", System.currentTimeMillis());
         Keyword keyword = newsDAO.getKeywordByName("abc");
         Assert.assertEquals("abc", keyword.getKeywordLowercase());
         keyword = newsDAO.getKeywordById(id);
@@ -82,9 +82,9 @@ public class NewsDAOTest {
          * K2--->N2,N3
          */
         long idK1 = newsDAO.getAndIncrId();
-        newsTestDAO.insertKeyword(idK1, "AAA", "aaa", time);
+        newsTestDAO.insertKeyword(idK1, "AAA", "aaa", "", time);
         long idK2 = newsDAO.getAndIncrId();
-        newsTestDAO.insertKeyword(idK2, "BBB", "bbb", time);
+        newsTestDAO.insertKeyword(idK2, "BBB", "bbb", "", time);
         long idN1 = newsDAO.getAndIncrId();
         newsDAO.commitNews(idN1, "news111", "some content", "", time, time);
         long idN2 = newsDAO.getAndIncrId();
@@ -140,6 +140,23 @@ public class NewsDAOTest {
         Assert.assertEquals(3, news.size());
         keywords = newsDAO.getKeywordsByNewsId(idN2);
         Assert.assertEquals(1, keywords.size());
+    }
+
+    @Test
+    public void testTruthFake() {
+        long id = newsDAO.getAndIncrId();
+        newsDAO.commitNews(id, "title", "some content", "", System.currentTimeMillis(), System.currentTimeMillis());
+        newsDAO.updateNewsTruth(id, 10);
+        newsDAO.updateNewsFake(id, 20);
+        News news = newsDAO.getOneNewsById(id);
+        Assert.assertEquals(10, news.getTruth());
+        Assert.assertEquals(20, news.getFake());
+        newsDAO.updateNewsTruth(id, -3);
+        newsDAO.updateNewsFake(id, -6);
+        news = newsDAO.getOneNewsById(id);
+        Assert.assertEquals(7, news.getTruth());
+        Assert.assertEquals(14, news.getFake());
+
     }
 
 }

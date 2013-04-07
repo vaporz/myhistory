@@ -5,6 +5,7 @@ public class Keyword {
     private long keywordId;
     private String keyword;
     private String keywordLowercase;
+    private String wikiUrl;
     private long aliasId;
     private int hot;
     private long createTime;
@@ -58,6 +59,14 @@ public class Keyword {
 
     public void setHot(int hot) {
         this.hot = hot;
+    }
+
+    public String getWikiUrl() {
+        return wikiUrl;
+    }
+
+    public void setWikiUrl(String wikiUrl) {
+        this.wikiUrl = wikiUrl;
     }
 
     public long getCreateTime() {
