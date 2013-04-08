@@ -23,7 +23,7 @@ public class HostHolderInterceptor extends ControllerInterceptorAdapter {
 
     @Override
     public int getPriority() {
-        return 19990;// 值大的优先
+        return 9990;// 值大的优先
     }
 
     @Override

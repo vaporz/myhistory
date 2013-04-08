@@ -7,6 +7,7 @@ import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.service.NewsService;
 import com.zx.myhistory.util.CookieManager;
+import com.zx.myhistory.util.LoginRequired;
 
 import net.paoding.rose.web.Invocation;
 import net.paoding.rose.web.annotation.Param;
@@ -91,7 +92,7 @@ public class NewsController {
     @Get("keyword/{keywordId:[0-9]+}/news")
     public String listNewsByKeyword(Invocation inv, @Param("keywordId") long keywordId, @Param("newsTime") long newsTime,
         @Param("limit") int limit) throws BadRequestException {
-        if (limit <= 0 || newsTime < 0) {
+        if (limit <= 0 || newsTime < 0) {// TODO 不能抛出异常，要友好的提示给页面
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
         Keyword keyword = newsService.getTrueKeywordById(keywordId);

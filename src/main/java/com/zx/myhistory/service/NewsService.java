@@ -139,12 +139,12 @@ public class NewsService {
         newsBiz.updateNewsFake(newsId, delta);
     }
 
-    public Long registerUser(String pwd, String name) throws BizException {
+    public Long registerUser(String pwd, String name, String email, String locale) throws BizException {
         long userId = newsBiz.getUserIdByName(name);
         if (userId > 0) {
             throw new BizException(ErrorCode.DuplicatedName, "用户名已被占用");
         }
-        return newsBiz.registerUser(pwd, name);
+        return newsBiz.registerUser(pwd, name, email, locale);
     }
 
     public long getUserIdByNameAndPwd(String userName, String pwd) {

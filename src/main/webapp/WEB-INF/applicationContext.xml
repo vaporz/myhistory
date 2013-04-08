@@ -11,6 +11,12 @@
 	<context:component-scan base-package="com.zx.myhistory">
 	</context:component-scan>
 	
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages" />
+	</bean>
+	<bean id="roseLocaleResolver" class="com.zx.myhistory.util.AppLocaleResolver" />
+	
 	<bean id="jade.dataSource.com.zx.myhistory.dao"
 		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>

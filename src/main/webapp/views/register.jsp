@@ -13,9 +13,11 @@
   <%@ include file="header.jsp" %>
 ${msg}<br>
 <form method="post" action="/register">
-用户名：<input type="text" name="name" /><br>
-密码：<input type="text" name="pwd" /><br>
-重复密码：<input type="text" name="pwd2" /><br>
+*必填<br>
+*用户名：<input type="text" name="name" /><br>
+*密码：<input type="text" name="pwd" /><br>
+*重复密码：<input type="text" name="pwd2" /><br>
+邮箱：<input type="text" name="email" /><br>
 <input type="submit" value="注册">
 </form>
 </body>

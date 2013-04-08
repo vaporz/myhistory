@@ -5,6 +5,7 @@ import com.zx.myhistory.biz.NewsBiz;
 import com.zx.myhistory.model.User;
 import com.zx.myhistory.util.CacheUtils;
 import com.zx.myhistory.util.CookieManager;
+import com.zx.myhistory.util.LoginRequired;
 
 import net.paoding.rose.web.ControllerInterceptorAdapter;
 import net.paoding.rose.web.Invocation;
@@ -33,7 +34,7 @@ public class LoginRequiredInterceptor extends ControllerInterceptorAdapter {
 
     @Override
     public int getPriority() {
-        return 20000;// 值大的优先
+        return 10000;// 值大的优先
     }
 
     @Override
@@ -49,6 +50,9 @@ public class LoginRequiredInterceptor extends ControllerInterceptorAdapter {
             return "r:/login";
         }
         User host = newsBiz.getUserById(hostId);
+        if (host == null) {
+            return "r:/login";
+        }
         hostHolder.setHost(host);
         CacheUtils.cacheHostid(ticket, hostId);
         return true;

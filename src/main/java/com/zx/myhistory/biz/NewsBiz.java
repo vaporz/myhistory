@@ -137,9 +137,9 @@ public class NewsBiz {
         return userId == null ? 0 : userId;
     }
 
-    public Long registerUser(String pwd, String name) {
+    public Long registerUser(String pwd, String name, String email, String locale) {
         long userId = newsDAO.getUserId();
-        newsDAO.registerUser(userId, pwd, name, "", "", System.currentTimeMillis());// 如果将来分表，需要一个全局索引来查询name是否有重复
+        newsDAO.registerUser(userId, pwd, name, email, locale, System.currentTimeMillis());// 如果将来分表，需要一个全局索引来查询name是否有重复
         return userId;
     }
 

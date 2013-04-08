@@ -1,5 +1,5 @@
 
-package com.zx.myhistory.controllers;
+package com.zx.myhistory.util;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

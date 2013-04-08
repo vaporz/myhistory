@@ -54,8 +54,8 @@ public class LoginController {
     }
 
     @Post("register")
-    public String register(Invocation inv, @Param("name") String name, @Param("pwd") String pwd, @Param("pwd2") String pwd2)
-                                                                                                                            throws BadRequestException {
+    public String register(Invocation inv, @Param("name") String name, @Param("pwd") String pwd, @Param("pwd2") String pwd2,
+        @Param("email") String email) throws BadRequestException {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(pwd)) {
             return showRegister(inv, "不能为空");
         }
@@ -63,7 +63,8 @@ public class LoginController {
             return showRegister(inv, "密码输入不一致");
         }
         try {
-            newsService.registerUser(pwd, name);
+            String locale = NewsUtils.parseRawLocale(inv.getRequest());
+            newsService.registerUser(pwd, name, email, locale);
         } catch (BizException e) {
             return showRegister(inv, e.getMessage());
         }
