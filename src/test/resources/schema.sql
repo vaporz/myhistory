@@ -40,3 +40,18 @@ CREATE TABLE news (
 CREATE TABLE id_index (
 	id bigint unsigned auto_increment primary key
 );
+
+CREATE TABLE user_id_index (
+	id bigint unsigned auto_increment primary key
+);
+
+CREATE TABLE user (
+	user_id bigint(20) unsigned not null primary key,
+	pwd varchar(128) not null,
+	name varchar(256) not null,
+	credit int(11) not null default 0,
+	email varchar(128) not null default '',
+	locale varchar(32) not null default '',
+	create_time bigint(20) not null default 0
+    UNIQUE INDEX (name) 
+);

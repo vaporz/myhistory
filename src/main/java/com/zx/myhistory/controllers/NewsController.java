@@ -48,6 +48,7 @@ public class NewsController {
      * 提交事件
      */
     @Post("news/commit")
+    @LoginRequired
     public String commitNews(Invocation inv, @Param("url") String url, @Param("title") String title, @Param("content") String content,
         @Param("keywords") String keywords, @Param("newTime") String newTimeStr) throws ParseException, BadRequestException {
         Set<String> keywordSet = getKeywordSet(keywords);
@@ -116,6 +117,7 @@ public class NewsController {
      * 给某个事件添加关键字
      */
     @Post("news/{newsId:[0-9]+}/keywords")
+    @LoginRequired
     public String moreKeywords(Invocation inv, @Param("newsId") long newsId, @Param("keywords") String keywords) {
         Set<String> keywordSet = getKeywordSet(keywords);
         if (!CollectionUtils.isEmpty(keywordSet)) {
@@ -134,6 +136,7 @@ public class NewsController {
      * 合并关键字
      */
     @Post("keyword/merge")
+    @LoginRequired
     public String mergeKeywords(Invocation inv, @Param("keyword") String keyword, @Param("target") String target)
                                                                                                                  throws BadRequestException {
         if (StringUtils.isBlank(keyword) || StringUtils.isBlank(target)) {
@@ -160,21 +163,37 @@ public class NewsController {
         return listNewsByKeyword(inv, keywordId, 0, 30);
     }
 
+    /**
+     * 给事件投票“真实”
+     */
     @Get("news/{newsId:[0-9]+}/vote/truth")
     public String voteNewsTruth(Invocation inv, @Param("newsId") long newsId) throws BadRequestException {
         if (newsId <= 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
+        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vnt" + newsId);
+        if (StringUtils.isNotBlank(token)) {
+            return "@投过了";
+        }
         newsService.updateNewsTruth(newsId, 1);
+        CookieManager.getInstance().saveCookie(inv.getResponse(), "vnt" + newsId, "1", -1, "/", ".test.com");
         return showNews(inv, newsId);
     }
 
+    /**
+     * 给事件投票“谣传”
+     */
     @Get("news/{newsId:[0-9]+}/vote/fake")
     public String voteNewsFake(Invocation inv, @Param("newsId") long newsId) throws BadRequestException {
         if (newsId <= 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
+        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vnf" + newsId);
+        if (StringUtils.isNotBlank(token)) {
+            return "@投过了";
+        }
         newsService.updateNewsFake(newsId, 1);
+        CookieManager.getInstance().saveCookie(inv.getResponse(), "vnf" + newsId, "1", -1, "/", ".test.com");
         return showNews(inv, newsId);
     }
 }

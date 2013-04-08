@@ -2,8 +2,11 @@
 package com.zx.myhistory.service;
 
 import com.zx.myhistory.biz.NewsBiz;
+import com.zx.myhistory.model.BizException;
+import com.zx.myhistory.model.ErrorCode;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
+import com.zx.myhistory.model.User;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,5 +137,21 @@ public class NewsService {
 
     public void updateNewsFake(long newsId, int delta) {
         newsBiz.updateNewsFake(newsId, delta);
+    }
+
+    public Long registerUser(String pwd, String name) throws BizException {
+        long userId = newsBiz.getUserIdByName(name);
+        if (userId > 0) {
+            throw new BizException(ErrorCode.DuplicatedName, "用户名已被占用");
+        }
+        return newsBiz.registerUser(pwd, name);
+    }
+
+    public long getUserIdByNameAndPwd(String userName, String pwd) {
+        return newsBiz.getUserIdByNameAndPwd(userName, pwd);
+    }
+
+    public User getUserById(long userId) {
+        return newsBiz.getUserById(userId);
     }
 }
