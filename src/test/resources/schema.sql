@@ -52,6 +52,6 @@ CREATE TABLE user (
 	credit int(11) not null default 0,
 	email varchar(128) not null default '',
 	locale varchar(32) not null default '',
-	create_time bigint(20) not null default 0
+	create_time bigint(20) not null default 0,
     UNIQUE INDEX (name) 
 );

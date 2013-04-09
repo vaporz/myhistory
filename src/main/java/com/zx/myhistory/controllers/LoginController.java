@@ -4,6 +4,7 @@ package com.zx.myhistory.controllers;
 import com.zx.myhistory.model.BadRequestException;
 import com.zx.myhistory.model.BizException;
 import com.zx.myhistory.model.ErrorCode;
+import com.zx.myhistory.model.User;
 import com.zx.myhistory.service.NewsService;
 import com.zx.myhistory.util.CacheUtils;
 import com.zx.myhistory.util.CookieManager;
@@ -40,6 +41,8 @@ public class LoginController {
         if (userId > 0) {
             String ticket = NewsUtils.getLoginTicket(userId);
             CookieManager.getInstance().saveCookie(inv.getResponse(), "ticket", ticket, -1, "/", ".test.com");
+            User user = newsService.getUserById(userId);
+            CookieManager.getInstance().saveCookie(inv.getResponse(), "locale", user.getLocale(), -1, "/", ".test.com");
             CacheUtils.cacheHostid(ticket, userId);
             return "r:/keywords";
         } else {

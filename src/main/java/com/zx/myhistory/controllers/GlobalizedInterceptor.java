@@ -63,17 +63,23 @@ public class GlobalizedInterceptor extends ControllerInterceptorAdapter {
 
     public String getLocale(Invocation inv) {
         String locale = NewsUtils.parseRawLocale(inv.getRequest());
-        User host = hostHolder.getHost();
-        if (host != null) {
-            locale = host.getLocale();
-        } else {
-            String ticket = CookieManager.getInstance().getCookie(inv.getRequest(), "ticket");
-            if (StringUtils.isNotBlank(ticket)) {
-                long hostId = CacheUtils.getHostid(ticket);
-                if (hostId > 0) {
-                    host = newsBiz.getUserById(hostId);
-                    if (host != null && StringUtils.isNotBlank(host.getLocale())) {
-                        locale = host.getLocale();
+        String cookieLocale = CookieManager.getInstance().getCookie(inv.getRequest(), "locale");
+        if (StringUtils.isNotBlank(cookieLocale)) {// 如果cookie里设置了locale就使用cookie中的
+            // TODO 用户修改自己的locale时也要改一下cookie中的locale
+            locale = cookieLocale;
+        } else {// cookie里没有locale，尝试从user设置里取
+            User host = hostHolder.getHost();
+            if (host != null) {
+                locale = host.getLocale();
+            } else {
+                String ticket = CookieManager.getInstance().getCookie(inv.getRequest(), "ticket");
+                if (StringUtils.isNotBlank(ticket)) {
+                    long hostId = CacheUtils.getHostid(ticket);
+                    if (hostId > 0) {
+                        host = newsBiz.getUserById(hostId);
+                        if (host != null && StringUtils.isNotBlank(host.getLocale())) {
+                            locale = host.getLocale();
+                        }
                     }
                 }
             }

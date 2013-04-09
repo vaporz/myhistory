@@ -3,6 +3,7 @@ package com.zx.myhistory.dao;
 
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
+import com.zx.myhistory.model.User;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Assert;
@@ -156,7 +157,18 @@ public class NewsDAOTest {
         news = newsDAO.getOneNewsById(id);
         Assert.assertEquals(7, news.getTruth());
         Assert.assertEquals(14, news.getFake());
+    }
 
+    @Test
+    public void testUser() {
+        long id = newsDAO.getUserId();
+        newsDAO.registerUser(id, "123456", "user1", "test@test.com", "zh", System.currentTimeMillis());
+        long userId = newsDAO.getUserIdByName("user1");
+        Assert.assertEquals(id, userId);
+        userId = newsDAO.getUserIdByNameAndPwd("user1", "123456");
+        Assert.assertEquals(id, userId);
+        User user = newsDAO.getUserById(id);
+        Assert.assertEquals("zh", user.getLocale());
     }
 
 }
