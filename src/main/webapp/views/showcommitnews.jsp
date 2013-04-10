@@ -4,12 +4,15 @@
 <html>
 <head>
 <meta http-equiv=Content-Type content="text/html;charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
 <title>提交事件</title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 </head>
 <body>
   <%@ include file="header.jsp" %>
+<div class="container">
   ${msg}<br>
 <form method="post" action="/news/commit">
 新闻URL：<input type="text" name="url"/>(可选，如果不填会被认为是没有正式来源的不靠谱消息)<br>
@@ -19,9 +22,8 @@
 关键字：<input type="text" name="keywords"/>(用英文逗号间隔)<br>
 <input type="submit" value="提交">
 </form>
+</div>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 </body>
 </html>
-<%@ page contentType="text/html;charset=UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!doctype html>
-<html>
