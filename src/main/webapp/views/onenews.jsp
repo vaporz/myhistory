@@ -5,12 +5,15 @@
 <html>
 <head>
 <meta http-equiv=Content-Type content="text/html;charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
 <title>事件</title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 </head>
 <body>
   <%@ include file="header.jsp" %>
+<div class="container">
 标题：${news.title}<br>
 投票：<a href="/news/${news.newsId}/vote/truth">这是真的</a>（${news.truth}）/<a href="/news/${news.newsId}/vote/fake">这是造谣</a>（${news.fake}）<br>
 事件时间：<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${news.newsTime}" /><br>
@@ -25,5 +28,8 @@
 </form>
 内容：<br>
 <textarea name="content" cols="60" rows="10">${news.content}</textarea>
+</div>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 </body>
 </html>

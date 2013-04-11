@@ -42,6 +42,7 @@ public class NewsController {
     @Get("news/commit")
     public String showCommitNews(Invocation inv, String msg) {
         inv.addModel("msg", StringUtils.defaultString(msg));
+        inv.addModel("active", "commit");
         return "showcommitnews";
     }
 
@@ -83,6 +84,7 @@ public class NewsController {
     public String listKerwords(Invocation inv) {
         List<Keyword> list = newsService.getKeywords();
         inv.addModel("keywords", list);
+        inv.addModel("active", "keywords");
         return "keywords";
     }
 
@@ -99,6 +101,7 @@ public class NewsController {
         List<News> list = newsService.getNewsByKeyword(keyword.getKeywordId(), newsTime, limit);
         inv.addModel("keyword", keyword);
         inv.addModel("news", list);
+        inv.addModel("active", "keywords");
         return "news";
     }
 
@@ -111,6 +114,7 @@ public class NewsController {
         List<Keyword> keywords = newsService.getKeywordsByNewsId(newsId);
         inv.addModel("keywords", keywords);
         inv.addModel("news", news);
+        inv.addModel("active", "keywords");
         return "onenews";
     }
 
@@ -130,6 +134,7 @@ public class NewsController {
     @Get("keyword/merge")
     public String showMergeKeyword(Invocation inv, String msg) {
         inv.addModel("msg", StringUtils.defaultString(msg));
+        inv.addModel("active", "merge");
         return "mergekeyword";
     }
 

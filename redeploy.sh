@@ -1,5 +1,5 @@
 #!/bin/bash
-mvn -U clean package
+mvn clean package
 echo 'rm -rf /opt/www/myhistory'
 rm -rf /opt/www/myhistory 
 echo 'cp -r ./target/myhistory-0.0.1-SNAPSHOT /opt/www/myhistory'

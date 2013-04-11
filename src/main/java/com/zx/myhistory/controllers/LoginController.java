@@ -26,9 +26,15 @@ public class LoginController {
     private NewsService newsService;
 
     @Get("login")
-    public String showLogin(Invocation inv, String msg) {
-        msg = StringUtils.isBlank(msg) ? "请登陆" : msg;
-        inv.addModel("msg", msg);
+    public String showLogin(Invocation inv, String msg, String msgType) {
+        if (StringUtils.isBlank(msg)) {
+            msgType = "info";
+        } else {
+            msgType = StringUtils.defaultString(msgType, "success");
+        }
+        inv.addModel("msg", StringUtils.defaultString(msg, "请输入用户名和密码"));
+        inv.addModel("active", "login");
+        inv.addModel("msgType", msgType);
         return "login";
     }
 
@@ -46,13 +52,14 @@ public class LoginController {
             CacheUtils.cacheHostid(ticket, userId);
             return "r:/keywords";
         } else {
-            return showLogin(inv, "用户名或密码错误");
+            return showLogin(inv, "用户名或密码错误", "error");
         }
     }
 
     @Get("register")
     public String showRegister(Invocation inv, String msg) {
         inv.addModel("msg", msg);
+        inv.addModel("active", "register");
         return "register";
     }
 
@@ -71,7 +78,7 @@ public class LoginController {
         } catch (BizException e) {
             return showRegister(inv, e.getMessage());
         }
-        return showLogin(inv, "注册成功！请登陆");
+        return showLogin(inv, "注册成功！请登陆", "success");
     }
 
     @Get("logout")
