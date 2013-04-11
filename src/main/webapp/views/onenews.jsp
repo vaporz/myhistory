@@ -23,9 +23,7 @@
 				来源：<a target="_blank" href="${news.url}">${news.url}</a>
 			</div>
 		</div>
-	</div>
-	<hr>
-	<div>
+		<br>
 		<div class="row">
 			<div class="span2">
 				<a href="/news/${news.newsId}/vote/truth"><i class="icon-thumbs-up"></i> 真实(${news.truth})</a> 
@@ -38,22 +36,26 @@
 				</c:forEach>
 			</div>
 		</div>
-		<form method="post" action="/news/${news.newsId}/keywords">
-		<div class="row">
-			<div class="span2">
-				<input class="input-small" type="text" name="keywords" />
-			</div>
-			<div class="span2">
-				<input class="btn btn-primary" type="submit" value="添加关键字">
-			</div>
-		</div>
-		</form>
+	</div>
+	<hr>
+	<div>
 		<div class="row">
 			<div class="span8">
 				<h4>事件简述</h4>
 				<p>${news.content}</p>
 			</div>
 		</div>
+	<hr>
+		<form method="post" action="/news/${news.newsId}/keywords">
+		<div class="row">
+			<div class="span2">
+				<input class="input-medium" type="text" name="keywords" />
+			</div>
+			<div class="span2">
+				<input class="btn btn-primary" type="submit" value="添加关键字">
+			</div>
+		</div>
+		</form>
 	</div>
 </div>
     <script src="http://code.jquery.com/jquery.js"></script>

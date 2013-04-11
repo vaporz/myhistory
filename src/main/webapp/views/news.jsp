@@ -13,31 +13,42 @@
 <body>
   <%@ include file="header.jsp" %>
 <div class="container">
-	<h1>${keyword.keyword}</h1>
-	<i class="icon-fire"></i> ${keyword.hot} 
+	<h1>${keyword.keyword} <i class="icon-fire">&nbsp;<span class="label label-important">${keyword.hot}</span></i>  </h1>
+	<p>
 	<c:if test="${!voted}"><a class="btn btn-warning" href="/keyword/${keyword.keywordId}/vote/hot">关注</a></c:if>
-	<c:if test="${voted}"><a class="btn btn-warning" href="#">已关注</a></c:if><br><br>
-	<c:if test="${!empty keyword.wikiUrl}"><span class="label label-info">相关wiki</span><a target='_blank' href="${keyword.wikiUrl}">${keyword.wikiUrl}</a><br><br></c:if>
+	<c:if test="${voted}"><a class="btn btn-warning" href="#">已关注</a></c:if>
+	<c:if test="${!empty keyword.wikiUrl}"><a class="btn btn-inverse" target='_blank' href="${keyword.wikiUrl}">WIKI</a><br><br></c:if>
+	</p>
+	
+
 	<table class="table table-striped">
 		<tr>
 			<th>事件时间</th>
 			<th>标题</th>
-			<th>真实</th>
-			<th>谣传</th>
+			<th><span class="label label-success">真实</span> vs <span class="label label-important">谣传</span></th>
 		</tr>
 		<c:forEach var="item" items="${news}" varStatus="status">
 		<tr>
-			<td>
+			<td style="padding-top:15px">
 			<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${item.newsTime}" />
 			</td>
-			<td>
+			<td style="padding-top:15px">
 			<a href="/news/${item.newsId}">${item.title}</a>
 			</td>
 			<td>
-			${item.truth}
-			</td>
-			<td>
-			${item.fake}
+			<c:if test="${(item.truth+item.fake)!=0}">
+				<div class="progress" style="margin-bottom:0px">
+    				<div class="bar bar-success" style="width: ${100*item.truth/(item.truth+item.fake)}%;"></div>
+    				<div class="bar bar-danger" style="width: ${100*item.fake/(item.truth+item.fake)}%;"></div>
+    			</div>
+    			<div style="display:inline-block;line-height:15px;font-size:13px"><i class="icon-thumbs-up"></i> ${item.truth}</div>
+    			<div style="float:right;display:inline-block;line-height:15px;font-size:13px">${item.fake} <i class="icon-thumbs-down"></i></div>
+			</c:if>
+			<c:if test="${(item.truth+item.fake)==0}">
+				<div class="progress" style="margin-bottom:2px">
+    				<div class="bar bar-success" style="width: 0%;"></div>
+    			</div>
+			</c:if>
 			</td>
 		</tr>
 		</c:forEach>

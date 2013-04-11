@@ -1,8 +1,8 @@
     <div class="container navbar">
     <div class="navbar-inner">
 <ul class="nav">
-<li <c:if test="${active=='commit'}">class="active"</c:if>><a href="/news/commit">提交新事件</a></li>
 <li <c:if test="${active=='keywords'}">class="active"</c:if>><a href="/keywords">关键词列表</a></li>
+<li <c:if test="${active=='commit'}">class="active"</c:if>><a href="/news/commit">提交新事件</a></li>
 <li <c:if test="${active=='merge'}">class="active"</c:if>><a href="/keyword/merge">合并关键字</a></li>
 </ul>
 <ul class="nav pull-right">

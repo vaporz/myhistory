@@ -36,7 +36,7 @@ public interface NewsDAO {
     public void insertKeywordNews(@SQLParam("keywordId") long keywordId, @SQLParam("newsId") long newsId,
         @SQLParam("newsTime") long newsTime);
 
-    @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword ORDER BY hot DESC LIMIT 200")
+    @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE alias_id=0 ORDER BY hot DESC LIMIT 200")
     public List<Keyword> getKeywords();
 
     @SQL("SELECT news_id, news_time FROM keyword_news WHERE keyword_id=:keywordId AND news_time<:newsTime ORDER BY news_time DESC LIMIT :limit")
