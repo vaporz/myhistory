@@ -12,13 +12,19 @@
 <body>
   <%@ include file="header.jsp" %>
 <div class="container">
-按热度排序：<br>
+<div class="offset1">
+<h2>按热度排序</h2>
+<ul>
 <c:forEach var="item" items="${keywords}" varStatus="status">
-<a href="/keyword/${item.keywordId}/news?newsTime=0&limit=30">${item.keyword}</a>
+<li class="line-height: 24px">
+<a href="/keyword/${item.keywordId}/news?newsTime=0&limit=30">${item.keyword}</a>（${item.hot}）
 <c:if test="${item.aliasId>0}">
-<a href="/keyword/${item.aliasId}/news?newsTime=0&limit=30">Alias</a>
-</c:if><br>
+<a href="/keyword/${item.aliasId}/news?newsTime=0&limit=30">已被合并</a>
+</c:if>
+</li>
 </c:forEach>
+</ul>
+</div>
 </div>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>

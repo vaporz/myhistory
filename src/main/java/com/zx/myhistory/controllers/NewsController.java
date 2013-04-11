@@ -105,6 +105,10 @@ public class NewsController {
         }
         Keyword keyword = newsService.getTrueKeywordById(keywordId);
         List<News> list = newsService.getNewsByKeyword(keyword.getKeywordId(), newsTime, limit);
+        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vk" + keywordId);
+        if (StringUtils.isNotBlank(token)) {
+            inv.addModel("voted", true);
+        }
         inv.addModel("keyword", keyword);
         inv.addModel("news", list);
         inv.addModel("active", "keywords");
@@ -134,7 +138,7 @@ public class NewsController {
         if (!CollectionUtils.isEmpty(keywordSet)) {
             newsService.attachKeywordsForNews(newsId, keywordSet);
         }
-        return showNews(inv, newsId);
+        return "r:/news/" + newsId;
     }
 
     @Get("keyword/merge")
@@ -172,7 +176,7 @@ public class NewsController {
         }
         newsService.voteKeywordHot(keywordId);
         CookieManager.getInstance().saveCookie(inv.getResponse(), "vk" + keywordId, "1", -1, "/", ".test.com");
-        return listNewsByKeyword(inv, keywordId, 0, 30);
+        return "r:/keyword/" + keywordId + "/news?newTime=0&limit=30";
     }
 
     /**

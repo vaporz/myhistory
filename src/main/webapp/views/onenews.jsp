@@ -13,20 +13,48 @@
 <body>
   <%@ include file="header.jsp" %>
 <div class="container">
-标题：${news.title}<br>
-投票：<a href="/news/${news.newsId}/vote/truth">这是真的</a>（${news.truth}）/<a href="/news/${news.newsId}/vote/fake">这是造谣</a>（${news.fake}）<br>
-事件时间：<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${news.newsTime}" /><br>
-来源：<a target="_blank" href="${news.url}">${news.url}</a><br>
-相关关键字：
-<c:forEach var="item" items="${keywords}" varStatus="status">
-<a href="/keyword/${item.keywordId}/news?newsTime=0&limit=30">${item.keyword}</a>,
-</c:forEach>
-<br>
-<form method="post" action="/news/${news.newsId}/keywords">
-添加关键字：<input type="text" name="keywords" /><input type="submit" value="添加"><br>
-</form>
-内容：<br>
-<textarea name="content" cols="60" rows="10">${news.content}</textarea>
+	<div class="jumbotron">
+		<h3>${news.title}</h3>
+		<div class="row">
+			<div class="span2">
+				<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${news.newsTime}" />
+			</div>
+			<div class="span6">
+				来源：<a target="_blank" href="${news.url}">${news.url}</a>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div>
+		<div class="row">
+			<div class="span2">
+				<a href="/news/${news.newsId}/vote/truth"><i class="icon-thumbs-up"></i> 真实(${news.truth})</a> 
+				/ <a href="/news/${news.newsId}/vote/fake"><i class="icon-thumbs-down"></i> 造谣(${news.fake})</a>
+			</div>
+			<div class="span6">
+				关键字：
+				<c:forEach var="item" items="${keywords}" varStatus="status">
+				<a href="/keyword/${item.keywordId}/news?newsTime=0&limit=30">${item.keyword}</a>,
+				</c:forEach>
+			</div>
+		</div>
+		<form method="post" action="/news/${news.newsId}/keywords">
+		<div class="row">
+			<div class="span2">
+				<input class="input-small" type="text" name="keywords" />
+			</div>
+			<div class="span2">
+				<input class="btn btn-primary" type="submit" value="添加关键字">
+			</div>
+		</div>
+		</form>
+		<div class="row">
+			<div class="span8">
+				<h4>事件简述</h4>
+				<p>${news.content}</p>
+			</div>
+		</div>
+	</div>
 </div>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
