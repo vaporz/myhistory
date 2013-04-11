@@ -2,6 +2,7 @@
 package com.zx.myhistory.controllers;
 
 import com.zx.myhistory.biz.NewsBiz;
+import com.zx.myhistory.model.HostHolder;
 import com.zx.myhistory.model.User;
 import com.zx.myhistory.util.CacheUtils;
 import com.zx.myhistory.util.CookieManager;
@@ -54,6 +55,7 @@ public class LoginRequiredInterceptor extends ControllerInterceptorAdapter {
             return "r:/login";
         }
         hostHolder.setHost(host);
+        // hostHolder.setLocale(NewsUtils.getAcceptedLocale(host.getLocale()));
         CacheUtils.cacheHostid(ticket, hostId);
         return true;
     }

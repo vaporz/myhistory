@@ -1,16 +1,23 @@
 
 package com.zx.myhistory.util;
 
-
 import net.paoding.rose.web.Invocation;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,8 +25,34 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class NewsUtils {
-
     private static final String TICKET_TOKEN = "hj2&)(HJ@H3ihfgd5jh4hG&94u5jy45#";
+
+    private static final String FILE_NAME = "globalized.properties";
+    private static List<String> acceptLocales = new ArrayList<String>();
+
+    static {
+        Properties properties = System.getProperties();
+        try {
+            Resource res = new ClassPathResource(FILE_NAME);
+            properties.load(res.getInputStream());
+            System.setProperties(properties);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!StringUtils.isBlank(System.getProperty("locale.accept", ""))) {
+            String[] locales = System.getProperty("locale.accept").split(",");
+            acceptLocales = Arrays.asList(locales);
+        }
+    }
+
+    public static String getAcceptedLocale(String locale) {
+        String result = locale;
+        // 如果不是目前接受的语言，就设置为默认语言
+        if (StringUtils.isBlank(locale) || !acceptLocales.contains(locale)) {
+            result = System.getProperty("locale.default", "zh");
+        }
+        return result;
+    }
 
     public static String getLoginTicket(long id) {
         return getMd5Digest(id + TICKET_TOKEN);
