@@ -5,7 +5,9 @@ import net.paoding.rose.web.Invocation;
 import net.paoding.rose.web.InvocationLocal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class HostHolder {
     @Autowired
     InvocationLocal inv;

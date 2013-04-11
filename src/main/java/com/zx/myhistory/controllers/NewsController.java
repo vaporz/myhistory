@@ -40,9 +40,15 @@ public class NewsController {
      * 显示事件提交页
      */
     @Get("news/commit")
-    public String showCommitNews(Invocation inv, String msg) {
+    public String showCommitNews(Invocation inv, String msg, String msgType) {
+        if (StringUtils.isBlank(msg)) {
+            msgType = "info";
+        } else {
+            msgType = StringUtils.defaultString(msgType, "success");
+        }
         inv.addModel("msg", StringUtils.defaultString(msg));
         inv.addModel("active", "commit");
+        inv.addModel("msgType", msgType);
         return "showcommitnews";
     }
 
@@ -58,7 +64,7 @@ public class NewsController {
             long newsTime = format.parse(newTimeStr).getTime();
             newsService.commitNews(title, content, url, newsTime, keywordSet);
         }
-        return showCommitNews(inv, "操作成功");
+        return showCommitNews(inv, "操作成功", "success");
     }
 
     private Set<String> getKeywordSet(String keywords) {

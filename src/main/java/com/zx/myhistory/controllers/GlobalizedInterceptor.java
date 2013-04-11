@@ -76,7 +76,7 @@ public class GlobalizedInterceptor extends ControllerInterceptorAdapter {
             localeResolver.setLocale(inv.getRequest(), inv.getResponse(), new Locale(locale));
             inv.getRequest().setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, localeResolver);
         }
-        inv.addModel("locale", locale);
+        // inv.addModel("locale", locale);
         logger.debug("Exit GlobalizedInterceptor!");
         return true;
     }

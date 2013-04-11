@@ -17,10 +17,14 @@ import net.paoding.rose.web.annotation.rest.Get;
 import net.paoding.rose.web.annotation.rest.Post;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Path("")
 public class LoginController {
+
+    private Log logger = LogFactory.getLog(LoginController.class);
 
     @Autowired
     private NewsService newsService;
@@ -57,8 +61,14 @@ public class LoginController {
     }
 
     @Get("register")
-    public String showRegister(Invocation inv, String msg) {
+    public String showRegister(Invocation inv, String msg, String msgType) {
+        if (StringUtils.isBlank(msg)) {
+            msgType = "info";
+        } else {
+            msgType = StringUtils.defaultString(msgType, "success");
+        }
         inv.addModel("msg", msg);
+        inv.addModel("msgType", msgType);
         inv.addModel("active", "register");
         return "register";
     }
@@ -66,17 +76,18 @@ public class LoginController {
     @Post("register")
     public String register(Invocation inv, @Param("name") String name, @Param("pwd") String pwd, @Param("pwd2") String pwd2,
         @Param("email") String email) throws BadRequestException {
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(pwd)) {
-            return showRegister(inv, "不能为空");
+        if (StringUtils.isBlank(name) || StringUtils.isBlank(pwd)) {// TODO 前端也应该检查
+            return showRegister(inv, "必填项不能为空", "error");
         }
         if (!StringUtils.equals(pwd, pwd2)) {
-            return showRegister(inv, "密码输入不一致");
+            return showRegister(inv, "密码输入不一致", "error");
         }
         try {
             String locale = NewsUtils.parseRawLocale(inv.getRequest());
             newsService.registerUser(pwd, name, email, locale);
         } catch (BizException e) {
-            return showRegister(inv, e.getMessage());
+            logger.error("registerError:", e);
+            return showRegister(inv, "内部错误", "error");
         }
         return showLogin(inv, "注册成功！请登陆", "success");
     }

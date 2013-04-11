@@ -6,10 +6,10 @@
 <li <c:if test="${active=='merge'}">class="active"</c:if>><a href="/keyword/merge">合并关键字</a></li>
 </ul>
 <ul class="nav pull-right">
-<c:if test="${!empty host}"><li><a href="#">${host.name}</a></li><li><a href="/logout">登出</a></li></c:if>
+<c:if test="${!empty host}"><li><a href="#"><i class="icon-user"></i> ${host.name}</a></li><li><a href="/logout"><i class="icon-share-alt"></i> 登出</a></li></c:if>
 <c:if test="${empty host}">
-<li <c:if test="${active=='login'}">class="active"</c:if>><a href="/login">登陆</a></li>
-<li <c:if test="${active=='register'}">class="active"</c:if>><a href="/register">注册</a></li></c:if>
+<li <c:if test="${active=='login'}">class="active"</c:if>><a href="/login"><i class="icon-home"></i> 登陆</a></li>
+<li <c:if test="${active=='register'}">class="active"</c:if>><a href="/register"><i class="icon-plus"></i> 注册</a></li></c:if>
 </ul>
     </div>
     </div>

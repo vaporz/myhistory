@@ -5,8 +5,7 @@
 <html>
 <head>
 <meta http-equiv=Content-Type content="text/html;charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<%@ include file="head.jsp" %>
 <title>注册</title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
@@ -14,14 +13,22 @@
 <body>
   <%@ include file="header.jsp" %>
 <div class="container">
-${msg}<br>
-<form method="post" action="/register">
-*必填<br>
-*用户名：<input type="text" name="name" /><br>
-*密码：<input type="text" name="pwd" /><br>
-*重复密码：<input type="text" name="pwd2" /><br>
-邮箱：<input type="text" name="email" /><br>
-<input type="submit" value="注册">
+<div class="span4 offset3">
+<c:if test="${!empty msg}">
+	<div class="alert alert-${msgType}">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		${msg}
+	</div>
+</c:if>
+<form method="post" action="/register" class="form-signin">
+<i class="icon-ok"></i> 必填<br>
+<i class="icon-ok"></i> 用户名：<input type="text" name="name" class="input-block-level"/>
+<i class="icon-ok"></i> 密码：<input type="text" name="pwd" class="input-block-level"/>
+<i class="icon-ok"></i> 重复密码：<input type="text" name="pwd2" class="input-block-level"/>
+邮箱：<input type="text" name="email" class="input-block-level"/>
+<div class="pull-right">
+<button class="btn btmn-large btn-primary" type="submit">提交</button>
+</div>
 </form>
 </div>
     <script src="http://code.jquery.com/jquery.js"></script>

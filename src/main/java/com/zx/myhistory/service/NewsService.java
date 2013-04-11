@@ -9,6 +9,7 @@ import com.zx.myhistory.model.News;
 import com.zx.myhistory.model.User;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class NewsService {
     private NewsBiz newsBiz;
 
     public void commitNews(String title, String content, String url, long newsTime, Set<String> keywordStrSet) {
+        url = StringUtils.defaultString(url);
         long newsId = newsBiz.commitNews(title, content, url, newsTime);
         attachKeywordsForNews(newsId, newsTime, keywordStrSet);
     }
