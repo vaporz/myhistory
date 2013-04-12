@@ -20,14 +20,23 @@
 				<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${news.newsTime}" />
 			</div>
 			<div class="span6">
-				来源：<a target="_blank" href="${news.url}">${news.url}</a>
+				来源：<a target="_blank" href="${news.url}">
+			<c:if test="${news.url.length()>50}">${news.url.substring(0,25)}......${news.url.substring(news.url.length()-20,news.url.length())}</c:if>
+			<c:if test="${news.url.length()<=50}">${news.url}</c:if>
+			</a>
 			</div>
 		</div>
 		<br>
 		<div class="row">
 			<div class="span2">
+				<c:if test="${voted}">
+				<a href="#"><i class="icon-thumbs-up"></i> 真实(${news.truth})</a> 
+				/ <a href="#"><i class="icon-thumbs-down"></i> 造谣(${news.fake})</a>(已投票)
+				</c:if>
+				<c:if test="${!voted}">
 				<a href="/news/${news.newsId}/vote/truth"><i class="icon-thumbs-up"></i> 真实(${news.truth})</a> 
 				/ <a href="/news/${news.newsId}/vote/fake"><i class="icon-thumbs-down"></i> 造谣(${news.fake})</a>
+				</c:if>
 			</div>
 			<div class="span6">
 				关键字：

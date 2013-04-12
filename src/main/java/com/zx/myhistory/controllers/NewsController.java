@@ -104,6 +104,9 @@ public class NewsController {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
         Keyword keyword = newsService.getTrueKeywordById(keywordId);
+        if(keyword==null){
+            return "@404";
+        }
         List<News> list = newsService.getNewsByKeyword(keyword.getKeywordId(), newsTime, limit);
         String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vk" + keywordId);
         if (StringUtils.isNotBlank(token)) {
@@ -122,6 +125,10 @@ public class NewsController {
     public String showNews(Invocation inv, @Param("newsId") long newsId) {
         News news = newsService.getOneNewsById(newsId);
         List<Keyword> keywords = newsService.getKeywordsByNewsId(newsId);
+        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vn" + newsId);
+        if (StringUtils.isNotBlank(token)) {
+            inv.addModel("voted", true);
+        }
         inv.addModel("keywords", keywords);
         inv.addModel("news", news);
         inv.addModel("active", "keywords");
@@ -172,7 +179,7 @@ public class NewsController {
         }
         String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vk" + keywordId);
         if (StringUtils.isNotBlank(token)) {
-            return "@投过了";
+            return "r:/keyword/" + keywordId + "/news?newTime=0&limit=30";
         }
         newsService.voteKeywordHot(keywordId);
         CookieManager.getInstance().saveCookie(inv.getResponse(), "vk" + keywordId, "1", -1, "/", ".test.com");
@@ -187,13 +194,13 @@ public class NewsController {
         if (newsId <= 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
-        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vnt" + newsId);
+        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vn" + newsId);
         if (StringUtils.isNotBlank(token)) {
-            return "@投过了";
+            return "r:/news/" + newsId;
         }
         newsService.updateNewsTruth(newsId, 1);
-        CookieManager.getInstance().saveCookie(inv.getResponse(), "vnt" + newsId, "1", -1, "/", ".test.com");
-        return showNews(inv, newsId);
+        CookieManager.getInstance().saveCookie(inv.getResponse(), "vn" + newsId, "1", -1, "/", ".test.com");
+        return "r:/news/" + newsId;
     }
 
     /**
@@ -204,12 +211,12 @@ public class NewsController {
         if (newsId <= 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
-        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vnf" + newsId);
+        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vn" + newsId);
         if (StringUtils.isNotBlank(token)) {
-            return "@投过了";
+            return "r:/news/" + newsId;
         }
         newsService.updateNewsFake(newsId, 1);
-        CookieManager.getInstance().saveCookie(inv.getResponse(), "vnf" + newsId, "1", -1, "/", ".test.com");
-        return showNews(inv, newsId);
+        CookieManager.getInstance().saveCookie(inv.getResponse(), "vn" + newsId, "1", -1, "/", ".test.com");
+        return "r:/news/" + newsId;
     }
 }

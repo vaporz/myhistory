@@ -15,12 +15,11 @@
 <div class="container">
 	<h1>${keyword.keyword} <i class="icon-fire">&nbsp;<span class="label label-important">${keyword.hot}</span></i>  </h1>
 	<p>
-	<c:if test="${!voted}"><a class="btn btn-warning" href="/keyword/${keyword.keywordId}/vote/hot">关注</a></c:if>
-	<c:if test="${voted}"><a class="btn btn-warning" href="#">已关注</a></c:if>
-	<c:if test="${!empty keyword.wikiUrl}"><a class="btn btn-inverse" target='_blank' href="${keyword.wikiUrl}">WIKI</a><br><br></c:if>
+	<c:if test="${!voted}"><a class="btn btn-warning" href="/keyword/${keyword.keywordId}/vote/hot"><strong>关注</strong></a></c:if>
+	<c:if test="${voted}"><a class="btn btn-warning" href="#"><strong>已关注</strong></a></c:if>
+	<c:if test="${!empty keyword.wikiUrl}"><a class="btn btn-info" target='_blank' href="${keyword.wikiUrl}"><strong>WIKI</strong></a><br><br></c:if>
+	<c:if test="${empty keyword.wikiUrl}"><a class="btn btn-default" href="#"><strong>WIKI</strong></a><br><br></c:if>
 	</p>
-	
-
 	<table class="table table-striped">
 		<tr>
 			<th>事件时间</th>
@@ -33,7 +32,10 @@
 			<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${item.newsTime}" />
 			</td>
 			<td style="padding-top:15px">
-			<a href="/news/${item.newsId}">${item.title}</a>
+			<a href="/news/${item.newsId}">
+			<c:if test="${item.title.length()>25}">${item.title.substring(0,25)}...</c:if>
+			<c:if test="${item.title.length()<=25}">${item.title}</c:if>
+			</a>
 			</td>
 			<td>
 			<c:if test="${(item.truth+item.fake)!=0}">
@@ -48,6 +50,8 @@
 				<div class="progress" style="margin-bottom:2px">
     				<div class="bar bar-success" style="width: 0%;"></div>
     			</div>
+    			<div style="display:inline-block;line-height:15px;font-size:13px"><i class="icon-thumbs-up"></i> 0</div>
+    			<div style="float:right;display:inline-block;line-height:15px;font-size:13px">0 <i class="icon-thumbs-down"></i></div>
 			</c:if>
 			</td>
 		</tr>

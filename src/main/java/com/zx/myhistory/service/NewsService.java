@@ -52,7 +52,7 @@ public class NewsService {
      */
     public Keyword getTrueKeywordById(long keywordId) {
         Keyword keyword = newsBiz.getKeywordById(keywordId);
-        while (keyword.getAliasId() > 0) {
+        while (keyword != null && keyword.getAliasId() > 0) {
             keyword = newsBiz.getKeywordById(keyword.getAliasId());
         }
         return keyword;
