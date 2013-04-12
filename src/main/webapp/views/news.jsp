@@ -18,7 +18,7 @@
 	<c:if test="${!voted}"><a class="btn btn-warning" href="/keyword/${keyword.keywordId}/vote/hot"><strong>关注</strong></a></c:if>
 	<c:if test="${voted}"><a class="btn btn-warning" href="#"><strong>已关注</strong></a></c:if>
 	<c:if test="${!empty keyword.wikiUrl}"><a class="btn btn-info" target='_blank' href="${keyword.wikiUrl}"><strong>WIKI</strong></a><br><br></c:if>
-	<c:if test="${empty keyword.wikiUrl}"><a class="btn btn-default" href="#"><strong>WIKI</strong></a><br><br></c:if>
+	<c:if test="${empty keyword.wikiUrl}"><a id="example" data-original-title="test" data-content="a<a href='http://www.baidu.com'>s</a>dfsf" rel="popover" class="btn btn-default" href="#"><strong>WIKI</strong></a><br><br></c:if>
 	</p>
 	<table class="table table-striped">
 		<tr>
@@ -59,6 +59,11 @@
 	</table>
 </div>
     <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script>
+	$(function (){
+	 $("#example").popover();
+	});
+	</script>
 </body>
 </html>
