@@ -7,6 +7,7 @@ import com.zx.myhistory.model.ErrorCode;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.model.User;
+import com.zx.myhistory.model.UserKeyword;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -14,9 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 @Service
@@ -69,10 +72,43 @@ public class NewsService {
 
     private void attachKeywordsForNews(long newsId, long newsTime, Set<String> keywordStrSet) {
         Set<Keyword> keywordSet = getKeywords(keywordStrSet, true);
-        // TODO 如果有存在alias的关键字，要找到根源的关键字
+        Map<String, Keyword> trueMap = new HashMap<String, Keyword>();
+        if (keywordSet != null) {
+            for (Keyword keyword : keywordSet) {
+                Keyword trueKeyword = keyword;
+                if (keyword.getAliasId() > 0) {
+                    trueKeyword = getTrueKeywordById(keyword.getKeywordId());
+                }
+                if (trueMap.get(trueKeyword.getKeyword()) == null) {
+                    trueMap.put(trueKeyword.getKeyword(), trueKeyword);
+                }
+            }
+        }
+        Set<Keyword> trueKeywordSet = new HashSet<Keyword>();
+        CollectionUtils.addAll(trueKeywordSet, trueMap.values().iterator());
         // TODO 有并发的问题，如果有关键字在执行过程中被alias？
-        newsBiz.commitKeywordNews(newsId, newsTime, keywordSet);
-        newsBiz.commitNewsKeyword(newsId, keywordSet);
+        newsBiz.commitKeywordNews(newsId, newsTime, trueKeywordSet);
+        newsBiz.commitNewsKeyword(newsId, trueKeywordSet);
+        // 通知关键字更新
+        notifyFollowers(trueKeywordSet);
+    }
+
+    private void notifyFollowers(Set<Keyword> trueKeywordSet) {
+        Map<Long, List<Long>> updateMap = new HashMap<Long, List<Long>>();
+        for (Keyword keyword : trueKeywordSet) {
+            List<Long> userIds = newsBiz.getKeywordFollowers(keyword.getKeywordId());
+            for (Long userId : userIds) {
+                List<Long> keywordIds = updateMap.get(userId);
+                if (keywordIds == null) {
+                    keywordIds = new ArrayList<Long>();
+                    updateMap.put(userId, keywordIds);
+                }
+                keywordIds.add(keyword.getKeywordId());
+            }
+        }
+        for (Entry<Long, List<Long>> entry : updateMap.entrySet()) {
+            newsBiz.updateUserKeywordNotRead(entry.getKey(), entry.getValue(), 1);
+        }
     }
 
     private Set<Keyword> getKeywords(Set<String> keywordStrSet, boolean createWhenUnxist) {
@@ -124,6 +160,7 @@ public class NewsService {
                 targetObj.getKeyword(), targetObj.getKeywordLowercase());
             newsBiz.insertKeywordNews(targetObj.getKeywordId(), item.getNewsId(), item.getNewsTime());
         }
+        // TODO 将关注了老keyword的用户转移到新keyword上，批量修改数据库
         newsBiz.deleteNewsByKeywordId(keywordObj.getKeywordId());
         newsBiz.aliasKeyword(keywordObj.getKeywordId(), targetObj.getKeywordId());
         newsBiz.redirectAlias(keywordObj.getKeywordId(), targetObj.getKeywordId());
@@ -155,5 +192,32 @@ public class NewsService {
 
     public User getUserById(long userId) {
         return newsBiz.getUserById(userId);
+    }
+
+    /**
+     * 返回boolean，表示是否是新关注者，如果是，则要加一
+     */
+    public boolean followKeyword(long userId, long keywordId) {
+        Keyword keyword = getKeywordById(keywordId);
+        int rowAffected = newsBiz.insertKeywordUser(keywordId, userId);
+        newsBiz.insertUserKeyword(userId, keywordId, keyword.getKeyword());
+        return rowAffected > 0;
+    }
+
+    public boolean isFollower(long userId, long keywordId) {
+        long returnId = newsBiz.getKeywordFollower(keywordId, userId);
+        return returnId > 0;
+    }
+
+    public void unfollowKeyword(long userId, long keywordId) {
+        newsBiz.deleteUserKeyword(userId, keywordId);
+    }
+
+    public List<UserKeyword> getUserKeywords(long userId) {
+        return newsBiz.getUserKeywords(userId);
+    }
+
+    public void clearUserKeyword(long userId, long keywordId) {
+        newsBiz.clearUserKeyword(userId, keywordId);
     }
 }

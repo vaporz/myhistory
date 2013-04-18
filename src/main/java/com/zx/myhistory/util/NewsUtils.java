@@ -4,20 +4,27 @@ package com.zx.myhistory.util;
 import net.paoding.rose.web.Invocation;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -143,5 +150,69 @@ public class NewsUtils {
             locale = locale.substring(0, index);
         }
         return locale;
+    }
+
+    public static boolean checkVoteKeywordCookie(Invocation inv, long keywordId) throws JSONException, UnsupportedEncodingException {
+        String json = CookieManager.getInstance().getCookie(inv.getRequest(), "vk");
+        if (StringUtils.isBlank(json)) {
+            return false;
+        }
+        json = URLDecoder.decode(json, "utf-8");
+        JSONArray array = new JSONArray(json);
+        Set<Long> keywordIdSet = new HashSet<Long>();
+        for (int i = 0; i < array.length(); i++) {
+            keywordIdSet.add(array.optLong(i));
+        }
+        return keywordIdSet.contains(keywordId);
+    }
+
+    public static boolean checkVoteNewsCookie(Invocation inv, long newsId) throws JSONException, UnsupportedEncodingException {
+        String json = CookieManager.getInstance().getCookie(inv.getRequest(), "vn");
+        if (StringUtils.isBlank(json)) {
+            return false;
+        }
+        json = URLDecoder.decode(json, "utf-8");
+        JSONArray array = new JSONArray(json);
+        Set<Long> newsIdSet = new HashSet<Long>();
+        for (int i = 0; i < array.length(); i++) {
+            newsIdSet.add(array.optLong(i));
+        }
+        return newsIdSet.contains(newsId);
+    }
+
+    public static void appendVoteKeywordCookie(Invocation inv, long keywordId) throws JSONException, UnsupportedEncodingException {
+        String json = CookieManager.getInstance().getCookie(inv.getRequest(), "vk");
+        JSONArray array = new JSONArray();
+        if (StringUtils.isNotBlank(json)) {
+            json = URLDecoder.decode(json, "utf-8");
+            array = new JSONArray(json);
+        }
+        if (array.length() >= 300) {
+            JSONArray newArray = new JSONArray(json);
+            for (int i = 50; i < array.length(); i++) {
+                newArray.put(array.getLong(i));
+            }
+            array = newArray;
+        }
+        array.put(keywordId);
+        CookieManager.getInstance().saveCookie(inv.getResponse(), "vk", URLEncoder.encode(array.toString(), "utf-8"), -1, "/", ".test.com");
+    }
+
+    public static void appendVoteNewsCookie(Invocation inv, long newsId) throws JSONException, UnsupportedEncodingException {
+        String json = CookieManager.getInstance().getCookie(inv.getRequest(), "vn");
+        JSONArray array = new JSONArray();
+        if (StringUtils.isNotBlank(json)) {
+            json = URLDecoder.decode(json, "utf-8");
+            array = new JSONArray(json);
+        }
+        if (array.length() >= 300) {
+            JSONArray newArray = new JSONArray(json);
+            for (int i = 50; i < array.length(); i++) {
+                newArray.put(array.getLong(i));
+            }
+            array = newArray;
+        }
+        array.put(newsId);
+        CookieManager.getInstance().saveCookie(inv.getResponse(), "vn", URLEncoder.encode(array.toString(), "utf-8"), -1, "/", ".test.com");
     }
 }

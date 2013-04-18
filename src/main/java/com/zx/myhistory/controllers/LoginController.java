@@ -97,6 +97,7 @@ public class LoginController {
     public String logout(Invocation inv, @Param("userId") String userId) {
         String ticket = CookieManager.getInstance().getCookie(inv.getRequest(), "ticket");
         CacheUtils.deleteHostidCache(ticket);
+        CookieManager.getInstance().clearCookie(inv.getResponse(), "ticket", -1, "/");
         return "r:/keywords";
     }
 }

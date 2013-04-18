@@ -4,6 +4,7 @@ package com.zx.myhistory.dao;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.model.User;
+import com.zx.myhistory.model.UserKeyword;
 
 import net.paoding.rose.jade.annotation.DAO;
 import net.paoding.rose.jade.annotation.ReturnGeneratedKeys;
@@ -106,4 +107,35 @@ public interface NewsDAO {
 
     @SQL("SELECT user_id, name, email, credit, locale, create_time FROM user WHERE user_id=:userId")
     public User getUserById(@SQLParam("userId") long userId);
+
+    @SQL("INSERT INTO user_keyword (user_id, keyword_id, keyword, last_modify_time)VALUES(:userId, :keywordId, :keyword, :lastModifyTime)")
+    public void insertUserKeyword(@SQLParam("userId") long userId, @SQLParam("keywordId") long keywordId,
+        @SQLParam("keyword") String keyword, @SQLParam("lastModifyTime") long lastModifyTime);
+
+    @SQL("INSERT INTO keyword_user (keyword_id, user_id, create_time)VALUES(:keywordId, :userId, :createTime)"
+            + " ON DUPLICATE KEY UPDATE keyword_id=:keywordId")
+    public Integer insertKeywordUser(@SQLParam("keywordId") long keywordId, @SQLParam("userId") long userId,
+        @SQLParam("createTime") long createTime);
+
+    @SQL("SELECT user_id FROM keyword_user WHERE keyword_id=:keywordId")
+    public List<Long> getKeywordFollowers(@SQLParam("keywordId") long keywordId);
+
+    @SQL("SELECT user_id FROM keyword_user WHERE keyword_id=:keywordId AND user_id=:userId")
+    public Long getKeywordFollower(@SQLParam("keywordId") long keywordId, @SQLParam("userId") long userId);
+
+    @SQL("UPDATE user_keyword SET not_read=not_read+:delta, last_modify_time=:time WHERE user_id=:userId AND keyword_id IN (:keywordIds)")
+    public void updateUserKeywordNotRead(@SQLParam("userId") long userId, @SQLParam("keywordIds") List<Long> keywordIds,
+        @SQLParam("delta") int delta, @SQLParam("time") long time);
+
+    @SQL("UPDATE user_keyword SET not_read=0,last_modify_time=0 WHERE user_id=:userId AND keyword_id=:keywordId")
+    public void clearUserKeywordNotRead(@SQLParam("userId") long userId, @SQLParam("keywordId") long keywordId);
+
+    @SQL("DELETE FROM user_keyword WHERE user_id=:userId AND keyword_id=:keywordId")
+    public void deleteUserKeyword(@SQLParam("userId") long userId, @SQLParam("keywordId") long keywordId);
+
+    @SQL("DELETE FROM keyword_user WHERE keyword_id=:keywordId AND user_id=:userId")
+    public void deleteKeywordUser(@SQLParam("keywordId") long keywordId, @SQLParam("userId") long userId);
+
+    @SQL("SELECT keyword_id, keyword, not_read, last_modify_time FROM user_keyword WHERE user_id=:userId ORDER BY last_modify_time DESC")
+    public List<UserKeyword> getUserKeywords(@SQLParam("userId") long userId);
 }

@@ -56,3 +56,19 @@ CREATE TABLE IF NOT EXISTS user (
     UNIQUE INDEX (name) 
 ) engine=InnoDB default charset=utf8;
 
+CREATE TABLE IF NOT EXISTS user_keyword (
+	user_id bigint(20) unsigned not null,
+	keyword_id bigint(20) unsigned not null,
+	keyword varchar(128) not null,
+	not_read int(11) not null default 0,
+	last_modify_time bigint(20) unsigned not null,
+	PRIMARY KEY  (user_id, keyword_id),
+	INDEX index_time (user_id, last_modify_time)
+) engine=InnoDB default charset=utf8;
+
+CREATE TABLE IF NOT EXISTS keyword_user (
+	keyword_id bigint(20) unsigned not null,
+	user_id bigint(20) unsigned not null,
+	create_time bigint(20) unsigned not null,
+	PRIMARY KEY  (keyword_id, user_id)
+) engine=InnoDB default charset=utf8;

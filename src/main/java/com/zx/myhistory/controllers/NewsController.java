@@ -6,8 +6,10 @@ import com.zx.myhistory.model.ErrorCode;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.service.NewsService;
+import com.zx.myhistory.util.CacheUtils;
 import com.zx.myhistory.util.CookieManager;
 import com.zx.myhistory.util.LoginRequired;
+import com.zx.myhistory.util.NewsUtils;
 
 import net.paoding.rose.web.Invocation;
 import net.paoding.rose.web.annotation.Param;
@@ -18,9 +20,11 @@ import net.paoding.rose.web.annotation.rest.Post;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
@@ -35,6 +39,11 @@ public class NewsController {
     private NewsService newsService;
 
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    @Get("")
+    public String index() {
+        return "r:/keywords";
+    }
 
     /**
      * 显示事件提交页
@@ -99,18 +108,35 @@ public class NewsController {
      */
     @Get("keyword/{keywordId:[0-9]+}/news")
     public String listNewsByKeyword(Invocation inv, @Param("keywordId") long keywordId, @Param("newsTime") long newsTime,
-        @Param("limit") int limit) throws BadRequestException {
+        @Param("limit") int limit, @Param("userId") long userId) throws BadRequestException, JSONException, UnsupportedEncodingException {
         if (limit <= 0 || newsTime < 0) {// TODO 不能抛出异常，要友好的提示给页面
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
         Keyword keyword = newsService.getTrueKeywordById(keywordId);
-        if(keyword==null){
+        if (keyword == null) {
             return "@404";
         }
         List<News> list = newsService.getNewsByKeyword(keyword.getKeywordId(), newsTime, limit);
-        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vk" + keywordId);
-        if (StringUtils.isNotBlank(token)) {
-            inv.addModel("voted", true);
+        if (userId > 0) {
+            newsService.clearUserKeyword(userId, keywordId);
+        }
+        boolean isLogin = false;
+        String ticket = CookieManager.getInstance().getCookie(inv.getRequest(), "ticket");
+        if (StringUtils.isNotBlank(ticket)) {
+            long hostId = CacheUtils.getHostid(ticket);
+            if (hostId > 0) {
+                isLogin = true;
+                if (newsService.isFollower(hostId, keywordId)) {
+                    inv.addModel("voted", true);
+                } else {
+                    inv.addModel("voted", false);
+                }
+            }
+        }
+        if (!isLogin) {
+            if (NewsUtils.checkVoteKeywordCookie(inv, keywordId)) {
+                inv.addModel("voted", true);
+            }
         }
         inv.addModel("keyword", keyword);
         inv.addModel("news", list);
@@ -122,11 +148,10 @@ public class NewsController {
      * 显示一个事件
      */
     @Get("news/{newsId:[0-9]+}")
-    public String showNews(Invocation inv, @Param("newsId") long newsId) {
+    public String showNews(Invocation inv, @Param("newsId") long newsId) throws JSONException, UnsupportedEncodingException {
         News news = newsService.getOneNewsById(newsId);
         List<Keyword> keywords = newsService.getKeywordsByNewsId(newsId);
-        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vn" + newsId);
-        if (StringUtils.isNotBlank(token)) {
+        if (NewsUtils.checkVoteNewsCookie(inv, newsId)) {
             inv.addModel("voted", true);
         }
         inv.addModel("keywords", keywords);
@@ -173,16 +198,37 @@ public class NewsController {
      * 给关键字关注度加一
      */
     @Get("keyword/{keywordId:[0-9]+}/vote/hot")
-    public String voteKeywordHot(Invocation inv, @Param("keywordId") long keywordId) throws BadRequestException {
+    @Post("keyword/{keywordId:[0-9]+}/vote/hot")
+    public String voteKeywordHot(Invocation inv, @Param("keywordId") long keywordId) throws BadRequestException, JSONException,
+                                                                                    UnsupportedEncodingException {
         if (keywordId <= 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
-        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vk" + keywordId);
-        if (StringUtils.isNotBlank(token)) {
-            return "r:/keyword/" + keywordId + "/news?newTime=0&limit=30";
+        boolean canVote = true;
+        boolean isLogin = false;
+        String ticket = CookieManager.getInstance().getCookie(inv.getRequest(), "ticket");
+        if (StringUtils.isNotBlank(ticket)) {
+            long hostId = CacheUtils.getHostid(ticket);
+            if (hostId > 0) {
+                isLogin = true;
+                canVote = newsService.followKeyword(hostId, keywordId);
+            }
         }
-        newsService.voteKeywordHot(keywordId);
-        CookieManager.getInstance().saveCookie(inv.getResponse(), "vk" + keywordId, "1", -1, "/", ".test.com");
+        if (!isLogin) {
+            if (NewsUtils.checkVoteKeywordCookie(inv, keywordId)) {
+                return "r:/keyword/" + keywordId + "/news?newTime=0&limit=30";
+            }
+        }
+        if (canVote) {
+            newsService.voteKeywordHot(keywordId);
+            NewsUtils.appendVoteKeywordCookie(inv, keywordId);
+        }
+        return "r:/keyword/" + keywordId + "/news?newTime=0&limit=30";
+    }
+
+    @Get("user/{userId:[0-9]+}/unfollow")
+    public String unfollowKeyword(Invocation inv, @Param("userId") long userId, @Param("keywordId") long keywordId) {
+        newsService.unfollowKeyword(userId, keywordId);
         return "r:/keyword/" + keywordId + "/news?newTime=0&limit=30";
     }
 
@@ -190,16 +236,16 @@ public class NewsController {
      * 给事件投票“真实”
      */
     @Get("news/{newsId:[0-9]+}/vote/truth")
-    public String voteNewsTruth(Invocation inv, @Param("newsId") long newsId) throws BadRequestException {
+    public String voteNewsTruth(Invocation inv, @Param("newsId") long newsId) throws BadRequestException, JSONException,
+                                                                             UnsupportedEncodingException {
         if (newsId <= 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
-        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vn" + newsId);
-        if (StringUtils.isNotBlank(token)) {
+        if (NewsUtils.checkVoteNewsCookie(inv, newsId)) {
             return "r:/news/" + newsId;
         }
         newsService.updateNewsTruth(newsId, 1);
-        CookieManager.getInstance().saveCookie(inv.getResponse(), "vn" + newsId, "1", -1, "/", ".test.com");
+        NewsUtils.appendVoteNewsCookie(inv, newsId);
         return "r:/news/" + newsId;
     }
 
@@ -207,16 +253,16 @@ public class NewsController {
      * 给事件投票“谣传”
      */
     @Get("news/{newsId:[0-9]+}/vote/fake")
-    public String voteNewsFake(Invocation inv, @Param("newsId") long newsId) throws BadRequestException {
+    public String voteNewsFake(Invocation inv, @Param("newsId") long newsId) throws BadRequestException, JSONException,
+                                                                            UnsupportedEncodingException {
         if (newsId <= 0) {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
-        String token = CookieManager.getInstance().getCookie(inv.getRequest(), "vn" + newsId);
-        if (StringUtils.isNotBlank(token)) {
+        if (NewsUtils.checkVoteNewsCookie(inv, newsId)) {
             return "r:/news/" + newsId;
         }
         newsService.updateNewsFake(newsId, 1);
-        CookieManager.getInstance().saveCookie(inv.getResponse(), "vn" + newsId, "1", -1, "/", ".test.com");
+        NewsUtils.appendVoteNewsCookie(inv, newsId);
         return "r:/news/" + newsId;
     }
 }

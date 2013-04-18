@@ -5,6 +5,7 @@ import com.zx.myhistory.dao.NewsDAO;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.model.User;
+import com.zx.myhistory.model.UserKeyword;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -150,5 +151,38 @@ public class NewsBiz {
 
     public User getUserById(long userId) {
         return newsDAO.getUserById(userId);
+    }
+
+    public void insertUserKeyword(long userId, long keywordId, String keyword) {
+        newsDAO.insertUserKeyword(userId, keywordId, keyword, System.currentTimeMillis());
+    }
+
+    public int insertKeywordUser(long keywordId, long userId) {
+        return newsDAO.insertKeywordUser(keywordId, userId, System.currentTimeMillis());
+    }
+
+    public void deleteUserKeyword(long userId, long keywordId) {
+        newsDAO.deleteUserKeyword(userId, keywordId);
+    }
+
+    public List<UserKeyword> getUserKeywords(long userId) {
+        return newsDAO.getUserKeywords(userId);
+    }
+
+    public void clearUserKeyword(long userId, long keywordId) {
+        newsDAO.clearUserKeywordNotRead(userId, keywordId);
+    }
+
+    public List<Long> getKeywordFollowers(long keywordId) {
+        return newsDAO.getKeywordFollowers(keywordId);
+    }
+
+    public void updateUserKeywordNotRead(long userId, List<Long> keywordIds, int delta) {
+        newsDAO.updateUserKeywordNotRead(userId, keywordIds, delta, System.currentTimeMillis());
+    }
+
+    public long getKeywordFollower(long keywordId, long userId) {
+        Long userId1 = newsDAO.getKeywordFollower(keywordId, userId);
+        return userId1 == null ? 0 : userId1;
     }
 }
