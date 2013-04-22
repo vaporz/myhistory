@@ -3,7 +3,9 @@ package com.zx.myhistory.controllers;
 
 import com.zx.myhistory.model.BadRequestException;
 import com.zx.myhistory.model.ErrorCode;
+import com.zx.myhistory.model.HostHolder;
 import com.zx.myhistory.model.Keyword;
+import com.zx.myhistory.model.Message;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.service.NewsService;
 import com.zx.myhistory.util.CacheUtils;
@@ -17,7 +19,7 @@ import net.paoding.rose.web.annotation.Path;
 import net.paoding.rose.web.annotation.rest.Get;
 import net.paoding.rose.web.annotation.rest.Post;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -37,6 +39,9 @@ public class NewsController {
     private Log logger = LogFactory.getLog(NewsController.class);
     @Autowired
     private NewsService newsService;
+
+    @Autowired
+    private HostHolder hostHolder;
 
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -264,5 +269,31 @@ public class NewsController {
         newsService.updateNewsFake(newsId, 1);
         NewsUtils.appendVoteNewsCookie(inv, newsId);
         return "r:/news/" + newsId;
+    }
+
+    @Get("message")
+    public String showMessageBoard(Invocation inv, @Param("msgId") long msgId) {
+        List<Message> list = newsService.getMessages(msgId, 50);
+        inv.addModel("messages", list);
+        inv.addModel("active", "message");
+        return "messageboard";
+    }
+
+    /**
+     * 网站留言板留言
+     */
+    @Post("message")
+    public String insertMessage(Invocation inv, @Param("userId") long userId, @Param("name") String name, @Param("content") String content) {
+        if (StringUtils.isNotBlank(content)) {
+            name = StringUtils.defaultIfBlank(name, "匿名");
+            newsService.insertMsg(userId, name, content);
+            inv.addModel("msg", "提交成功，3Q~");
+        } else {
+            inv.addModel("msg", "啥都不写可不行");
+        }
+        List<Message> list = newsService.getMessages(0, 50);
+        inv.addModel("messages", list);
+        inv.addModel("active", "message");
+        return "messageboard";
     }
 }

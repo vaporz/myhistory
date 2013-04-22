@@ -72,3 +72,11 @@ CREATE TABLE IF NOT EXISTS keyword_user (
 	create_time bigint(20) unsigned not null,
 	PRIMARY KEY  (keyword_id, user_id)
 ) engine=InnoDB default charset=utf8;
+
+CREATE TABLE IF NOT EXISTS message_board (
+	msg_id bigint(20) unsigned not null auto_increment primary key,
+	user_id bigint(20) unsigned not null default 0,
+	user_name varchar(128) not null default '',
+	content varchar(2048) not null default '',
+	create_time bigint(20) unsigned not null
+) engine=InnoDB default charset=utf8;

@@ -2,6 +2,7 @@
 package com.zx.myhistory.dao;
 
 import com.zx.myhistory.model.Keyword;
+import com.zx.myhistory.model.Message;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.model.User;
 import com.zx.myhistory.model.UserKeyword;
@@ -138,4 +139,11 @@ public interface NewsDAO {
 
     @SQL("SELECT keyword_id, keyword, not_read, last_modify_time FROM user_keyword WHERE user_id=:userId ORDER BY last_modify_time DESC")
     public List<UserKeyword> getUserKeywords(@SQLParam("userId") long userId);
+
+    @SQL("INSERT INTO message_board (user_id, user_name, content, create_time)VALUES(:userId, :userName, :content, :createTime)")
+    public void insertMsg(@SQLParam("userId") long userId, @SQLParam("userName") String userName, @SQLParam("content") String content,
+        @SQLParam("createTime") long createTime);
+
+    @SQL("SELECT msg_id, user_id, user_name, content, create_time FROM message_board WHERE msg_id<:msgId LIMIT :limit")
+    public List<Message> getMessages(@SQLParam("msgId") long msgId, @SQLParam("limit") int limit);
 }

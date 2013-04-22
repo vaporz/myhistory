@@ -3,6 +3,7 @@ package com.zx.myhistory.biz;
 
 import com.zx.myhistory.dao.NewsDAO;
 import com.zx.myhistory.model.Keyword;
+import com.zx.myhistory.model.Message;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.model.User;
 import com.zx.myhistory.model.UserKeyword;
@@ -77,7 +78,7 @@ public class NewsBiz {
     }
 
     public Map<String, Keyword> findKeywordsReturnMap(Set<String> keywordsLowercase) {
-        List<Keyword> list = newsDAO.getKeywordByName(keywordsLowercase);
+        List<Keyword> list = newsDAO.getKeywordByName(keywordsLowercase);// TODO 当存在海量关键字时，怎么办
         Map<String, Keyword> map = new HashMap<String, Keyword>();
         for (Keyword keyword : list) {
             map.put(keyword.getKeyword(), keyword);
@@ -184,5 +185,14 @@ public class NewsBiz {
     public long getKeywordFollower(long keywordId, long userId) {
         Long userId1 = newsDAO.getKeywordFollower(keywordId, userId);
         return userId1 == null ? 0 : userId1;
+    }
+
+    public void insertMsg(long userId, String userName, String content, long createTime) {
+        newsDAO.insertMsg(userId, userName, content, createTime);
+    }
+
+    public List<Message> getMessages(long msgId, int limit) {
+        msgId = msgId <= 0 ? Long.MAX_VALUE : msgId;
+        return newsDAO.getMessages(msgId, limit);
     }
 }

@@ -5,6 +5,7 @@ import com.zx.myhistory.biz.NewsBiz;
 import com.zx.myhistory.model.BizException;
 import com.zx.myhistory.model.ErrorCode;
 import com.zx.myhistory.model.Keyword;
+import com.zx.myhistory.model.Message;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.model.User;
 import com.zx.myhistory.model.UserKeyword;
@@ -94,6 +95,7 @@ public class NewsService {
     }
 
     private void notifyFollowers(Set<Keyword> trueKeywordSet) {
+        // TODO 优化，使用redis
         Map<Long, List<Long>> updateMap = new HashMap<Long, List<Long>>();
         for (Keyword keyword : trueKeywordSet) {
             List<Long> userIds = newsBiz.getKeywordFollowers(keyword.getKeywordId());
@@ -219,5 +221,13 @@ public class NewsService {
 
     public void clearUserKeyword(long userId, long keywordId) {
         newsBiz.clearUserKeyword(userId, keywordId);
+    }
+
+    public void insertMsg(long userId, String userName, String content) {
+        newsBiz.insertMsg(userId, userName, content, System.currentTimeMillis());
+    }
+
+    public List<Message> getMessages(long msgId, int limit) {
+        return newsBiz.getMessages(msgId, limit);
     }
 }
