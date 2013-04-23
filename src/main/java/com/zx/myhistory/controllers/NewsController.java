@@ -7,9 +7,8 @@ import com.zx.myhistory.model.HostHolder;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.Message;
 import com.zx.myhistory.model.News;
+import com.zx.myhistory.model.User;
 import com.zx.myhistory.service.NewsService;
-import com.zx.myhistory.util.CacheUtils;
-import com.zx.myhistory.util.CookieManager;
 import com.zx.myhistory.util.LoginRequired;
 import com.zx.myhistory.util.NewsUtils;
 
@@ -20,8 +19,6 @@ import net.paoding.rose.web.annotation.rest.Get;
 import net.paoding.rose.web.annotation.rest.Post;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -36,7 +33,7 @@ import java.util.Set;
 @Path("")
 public class NewsController {
 
-    private Log logger = LogFactory.getLog(NewsController.class);
+    // private Log logger = LogFactory.getLog(NewsController.class);
     @Autowired
     private NewsService newsService;
 
@@ -125,20 +122,14 @@ public class NewsController {
         if (userId > 0) {
             newsService.clearUserKeyword(userId, keywordId);
         }
-        boolean isLogin = false;
-        String ticket = CookieManager.getInstance().getCookie(inv.getRequest(), "ticket");
-        if (StringUtils.isNotBlank(ticket)) {
-            long hostId = CacheUtils.getHostid(ticket);
-            if (hostId > 0) {
-                isLogin = true;
-                if (newsService.isFollower(hostId, keywordId)) {
-                    inv.addModel("voted", true);
-                } else {
-                    inv.addModel("voted", false);
-                }
+        User host = hostHolder.getHost();
+        if (host != null) {
+            if (newsService.isFollower(host.getUserId(), keywordId)) {
+                inv.addModel("voted", true);
+            } else {
+                inv.addModel("voted", false);
             }
-        }
-        if (!isLogin) {
+        } else {
             if (NewsUtils.checkVoteKeywordCookie(inv, keywordId)) {
                 inv.addModel("voted", true);
             }
@@ -210,16 +201,10 @@ public class NewsController {
             throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
         }
         boolean canVote = true;
-        boolean isLogin = false;
-        String ticket = CookieManager.getInstance().getCookie(inv.getRequest(), "ticket");
-        if (StringUtils.isNotBlank(ticket)) {
-            long hostId = CacheUtils.getHostid(ticket);
-            if (hostId > 0) {
-                isLogin = true;
-                canVote = newsService.followKeyword(hostId, keywordId);
-            }
-        }
-        if (!isLogin) {
+        User host = hostHolder.getHost();
+        if (host != null) {
+            canVote = newsService.followKeyword(host.getUserId(), keywordId);
+        } else {
             if (NewsUtils.checkVoteKeywordCookie(inv, keywordId)) {
                 return "r:/keyword/" + keywordId + "/news?newTime=0&limit=30";
             }
