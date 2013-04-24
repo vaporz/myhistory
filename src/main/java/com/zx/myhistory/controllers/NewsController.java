@@ -73,7 +73,7 @@ public class NewsController {
     @Post("news/commit")
     @LoginRequired
     public String commitNews(Invocation inv, @Param("url") String url, @Param("title") String title, @Param("content") String content,
-        @Param("keywords") String keywords, @Param("newTime") String newTimeStr) throws ParseException, BadRequestException {
+        @Param("keywords") String keywords, @Param("newTime") String newTimeStr) throws ParseException {
         Set<String> keywordSet = getKeywordSet(keywords);
         if (!CollectionUtils.isEmpty(keywordSet)) {
             long newsTime = format.parse(newTimeStr).getTime();
@@ -116,7 +116,7 @@ public class NewsController {
     public String listNewsByKeyword(Invocation inv, @Param("keywordId") long keywordId, @Param("newsTime") long newsTime,
         @Param("limit") int limit, @Param("userId") long userId) throws BadRequestException, JSONException, UnsupportedEncodingException {
         if (limit <= 0 || newsTime < 0) {// TODO 不能抛出异常，要友好的提示给页面
-            throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+            throw new BadRequestException(ErrorCode.ErrorParameters, "参数错误");
         }
         Keyword keyword = newsService.getTrueKeywordById(keywordId);
         if (keyword == null) {
@@ -192,7 +192,7 @@ public class NewsController {
     public String mergeKeywords(Invocation inv, @Param("keyword") String keyword, @Param("target") String target)
                                                                                                                  throws BadRequestException {
         if (StringUtils.isBlank(keyword) || StringUtils.isBlank(target)) {
-            throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+            throw new BadRequestException(ErrorCode.ErrorParameters, "参数错误");
         }
         newsService.mergeKerword(keyword, target);
         return showMergeKeyword(inv, "操作成功");
@@ -206,7 +206,7 @@ public class NewsController {
     public String voteKeywordHot(Invocation inv, @Param("keywordId") long keywordId) throws BadRequestException, JSONException,
                                                                                     UnsupportedEncodingException {
         if (keywordId <= 0) {
-            throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+            throw new BadRequestException(ErrorCode.ErrorParameters, "参数错误");
         }
         boolean canVote = true;
         User host = hostHolder.getHost();
@@ -237,7 +237,7 @@ public class NewsController {
     public String voteNewsTruth(Invocation inv, @Param("newsId") long newsId) throws BadRequestException, JSONException,
                                                                              UnsupportedEncodingException {
         if (newsId <= 0) {
-            throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+            throw new BadRequestException(ErrorCode.ErrorParameters, "参数错误");
         }
         if (NewsUtils.checkVoteNewsCookie(inv, newsId)) {
             return "r:/news/" + newsId;
@@ -254,7 +254,7 @@ public class NewsController {
     public String voteNewsFake(Invocation inv, @Param("newsId") long newsId) throws BadRequestException, JSONException,
                                                                             UnsupportedEncodingException {
         if (newsId <= 0) {
-            throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+            throw new BadRequestException(ErrorCode.ErrorParameters, "参数错误");
         }
         if (NewsUtils.checkVoteNewsCookie(inv, newsId)) {
             return "r:/news/" + newsId;

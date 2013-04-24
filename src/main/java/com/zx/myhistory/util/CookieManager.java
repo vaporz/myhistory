@@ -39,7 +39,7 @@ public class CookieManager {
     }
 
     public void saveCookie(HttpServletResponse response, String key, String value, int second, String path) {
-        saveCookie(response, key, value, second, path, ".test.com");
+        saveCookie(response, key, value, second, path, NewsConstants.CookieDomain);
     }
 
     // domain=.xiaomi.com
@@ -52,7 +52,7 @@ public class CookieManager {
     }
 
     public void clearCookie(HttpServletResponse response, String key, int second, String path) {
-        clearCookie(response, key, second, path, ".test.com");
+        clearCookie(response, key, second, path, NewsConstants.CookieDomain);
     }
 
     public void clearCookie(HttpServletResponse response, String key, int second, String path, String domain) {

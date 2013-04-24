@@ -1,13 +1,12 @@
 
 package com.zx.myhistory.controllers;
 
-import com.zx.myhistory.model.BadRequestException;
 import com.zx.myhistory.model.BizException;
-import com.zx.myhistory.model.ErrorCode;
 import com.zx.myhistory.model.User;
 import com.zx.myhistory.service.NewsService;
 import com.zx.myhistory.util.CacheUtils;
 import com.zx.myhistory.util.CookieManager;
+import com.zx.myhistory.util.NewsConstants;
 import com.zx.myhistory.util.NewsUtils;
 
 import net.paoding.rose.web.Invocation;
@@ -43,16 +42,16 @@ public class LoginController {
     }
 
     @Post("login")
-    public String login(Invocation inv, @Param("name") String name, @Param("pwd") String pwd) throws BadRequestException {
+    public String login(Invocation inv, @Param("name") String name, @Param("pwd") String pwd) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(pwd)) {
-            throw new BadRequestException(ErrorCode.ErrorParameters, "wrong parameters");
+            return showLogin(inv, "参数错误", "error");
         }
         long userId = newsService.getUserIdByNameAndPwd(name, pwd);
         if (userId > 0) {
             String ticket = NewsUtils.getLoginTicket(userId);
-            CookieManager.getInstance().saveCookie(inv.getResponse(), "ticket", ticket, -1, "/", ".test.com");
+            CookieManager.getInstance().saveCookie(inv.getResponse(), "ticket", ticket, -1, "/", NewsConstants.CookieDomain);
             User user = newsService.getUserById(userId);
-            CookieManager.getInstance().saveCookie(inv.getResponse(), "locale", user.getLocale(), -1, "/", ".test.com");
+            CookieManager.getInstance().saveCookie(inv.getResponse(), "locale", user.getLocale(), -1, "/", NewsConstants.CookieDomain);
             CacheUtils.cacheHostid(ticket, userId);
             return "r:/keywords";
         } else {
@@ -75,7 +74,7 @@ public class LoginController {
 
     @Post("register")
     public String register(Invocation inv, @Param("name") String name, @Param("pwd") String pwd, @Param("pwd2") String pwd2,
-        @Param("email") String email) throws BadRequestException {
+        @Param("email") String email) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(pwd)) {// TODO 前端也应该检查
             return showRegister(inv, "必填项不能为空", "error");
         }

@@ -7,7 +7,7 @@ fi
 
 DATE=`date +%s`
 
-mvn -U clean package
+mvn -U -Dproduction=true clean package
 cd target
 mv myhistory-0.0.1-SNAPSHOT myhistory.$DATE
 tar czvf myhistory.tar myhistory.$DATE
