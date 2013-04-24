@@ -96,9 +96,10 @@ public interface NewsDAO {
     @ReturnGeneratedKeys
     public Long getUserId();
 
-    @SQL("INSERT INTO user (user_id, pwd, name, email, locale, create_time)VALUES(:userId, :pwd, :name, :email, :locale, :createTime)")
+    @SQL("INSERT INTO user (user_id, pwd, name, icon, email, locale, create_time)VALUES(:userId, :pwd, :name, :icon, :email, :locale, :createTime)")
     public void registerUser(@SQLParam("userId") long userId, @SQLParam("pwd") String pwd, @SQLParam("name") String name,
-        @SQLParam("email") String email, @SQLParam("locale") String locale, @SQLParam("createTime") long createTime);
+        @SQLParam("icon") String icon, @SQLParam("email") String email, @SQLParam("locale") String locale,
+        @SQLParam("createTime") long createTime);
 
     @SQL("SELECT user_id FROM user WHERE name=:userName")
     public Long getUserIdByName(@SQLParam("userName") String userName);
@@ -106,7 +107,7 @@ public interface NewsDAO {
     @SQL("SELECT user_id FROM user WHERE name=:userName AND pwd=:pwd")
     public Long getUserIdByNameAndPwd(@SQLParam("userName") String userName, @SQLParam("pwd") String pwd);
 
-    @SQL("SELECT user_id, name, email, credit, locale, create_time FROM user WHERE user_id=:userId")
+    @SQL("SELECT user_id, name, icon, email, credit, locale, create_time FROM user WHERE user_id=:userId")
     public User getUserById(@SQLParam("userId") long userId);
 
     @SQL("INSERT INTO user_keyword (user_id, keyword_id, keyword, last_modify_time)VALUES(:userId, :keywordId, :keyword, :lastModifyTime)")

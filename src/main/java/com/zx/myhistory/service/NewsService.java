@@ -185,7 +185,7 @@ public class NewsService {
         if (userId > 0) {
             throw new BizException(ErrorCode.DuplicatedName, "用户名已被占用");
         }
-        return newsBiz.registerUser(pwd, name, email, locale);
+        return newsBiz.registerUser(pwd, name, "", email, locale);
     }
 
     public long getUserIdByNameAndPwd(String userName, String pwd) {

@@ -65,6 +65,32 @@
 			</div>
 		</div>
 		</form>
+		<h4>评论</h4>
+		<c:forEach var="item" items="${comments}" varStatus="status">
+			<div>
+				<div><strong>${item.userName}</strong> - <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${item.createTime}" /></div>
+				<div>${item.content}</div>
+			</div>
+	<hr>
+		</c:forEach>
+		<form method="post" action="/comment">
+		<input type="hidden" name="newsId" value="${news.newsId}"/>
+		<c:if test="${!empty host}"><input type="hidden" name="userId" value="${host.userId}"/></c:if>
+		<c:if test="${!empty host}"><input type="hidden" name="userIcon" value="${host.icon}"/></c:if>
+		<div>
+			<div>
+			
+				名字：<c:if test="${!empty host}">${host.name}<input class="input-medium" type="hidden" name="userName" value="${host.name}"/></c:if>
+				<c:if test="${empty host}"><input class="input-medium" type="text" name="userName"/></c:if>
+			</div>
+			<div>
+				内容：<input class="input-medium" type="text" name="content" />
+			</div>
+			<div>
+				<input class="btn btn-primary" type="submit" value="评论">
+			</div>
+		</div>
+		</form>
 	</div>
 </div>
     <script src="http://code.jquery.com/jquery.js"></script>

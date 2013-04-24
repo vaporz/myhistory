@@ -162,7 +162,7 @@ public class NewsDAOTest {
     @Test
     public void testUser() {
         long id = newsDAO.getUserId();
-        newsDAO.registerUser(id, "123456", "user1", "test@test.com", "zh", System.currentTimeMillis());
+        newsDAO.registerUser(id, "123456", "user1", "", "test@test.com", "zh", System.currentTimeMillis());
         long userId = newsDAO.getUserIdByName("user1");
         Assert.assertEquals(id, userId);
         userId = newsDAO.getUserIdByNameAndPwd("user1", "123456");

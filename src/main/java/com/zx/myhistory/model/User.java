@@ -11,6 +11,7 @@ public class User implements Serializable {
     private long userId;
     private String name;
     private String email;
+    private String icon;
     private String locale;
     private int credit;
     private long createTime;
@@ -21,6 +22,14 @@ public class User implements Serializable {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public String getName() {

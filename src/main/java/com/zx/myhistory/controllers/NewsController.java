@@ -2,12 +2,14 @@
 package com.zx.myhistory.controllers;
 
 import com.zx.myhistory.model.BadRequestException;
+import com.zx.myhistory.model.Comment;
 import com.zx.myhistory.model.ErrorCode;
 import com.zx.myhistory.model.HostHolder;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.Message;
 import com.zx.myhistory.model.News;
 import com.zx.myhistory.model.User;
+import com.zx.myhistory.service.CommentService;
 import com.zx.myhistory.service.NewsService;
 import com.zx.myhistory.util.LoginRequired;
 import com.zx.myhistory.util.NewsUtils;
@@ -36,6 +38,8 @@ public class NewsController {
     // private Log logger = LogFactory.getLog(NewsController.class);
     @Autowired
     private NewsService newsService;
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private HostHolder hostHolder;
@@ -144,12 +148,16 @@ public class NewsController {
      * 显示一个事件
      */
     @Get("news/{newsId:[0-9]+}")
-    public String showNews(Invocation inv, @Param("newsId") long newsId) throws JSONException, UnsupportedEncodingException {
+    public String showNews(Invocation inv, @Param("newsId") long newsId, @Param("createTime") long createTime, @Param("limit") int limit)
+                                                                                                                                         throws JSONException,
+                                                                                                                                         UnsupportedEncodingException {
         News news = newsService.getOneNewsById(newsId);
         List<Keyword> keywords = newsService.getKeywordsByNewsId(newsId);
         if (NewsUtils.checkVoteNewsCookie(inv, newsId)) {
             inv.addModel("voted", true);
         }
+        List<Comment> comments = commentService.getComments(newsId, createTime, limit);
+        inv.addModel("comments", comments);
         inv.addModel("keywords", keywords);
         inv.addModel("news", news);
         inv.addModel("active", "keywords");

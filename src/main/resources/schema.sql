@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS user (
 	user_id bigint(20) unsigned not null primary key,
 	pwd varchar(128) not null,
 	name varchar(128) not null,
+	icon varchar(512) not null default '',
 	credit int(11) not null default 0,
 	email varchar(128) not null default '',
 	locale varchar(32) not null default '',
@@ -77,6 +78,21 @@ CREATE TABLE IF NOT EXISTS message_board (
 	msg_id bigint(20) unsigned not null auto_increment primary key,
 	user_id bigint(20) unsigned not null default 0,
 	user_name varchar(128) not null default '',
+	content varchar(2048) not null default '',
+	create_time bigint(20) unsigned not null
+) engine=InnoDB default charset=utf8;
+
+CREATE TABLE IF NOT EXISTS news_comment_id_index (
+	id bigint unsigned auto_increment primary key
+) engine=InnoDB default charset=utf8;
+
+CREATE TABLE IF NOT EXISTS news_comment (
+	comment_id bigint(20) unsigned not null primary key,
+	news_id bigint(20) unsigned not null,
+	user_id bigint(20) unsigned not null,
+	user_name varchar(128) not null default '',
+	user_icon varchar(512) not null default '',
+	is_login tinyint(4) not null default 0,
 	content varchar(2048) not null default '',
 	create_time bigint(20) unsigned not null
 ) engine=InnoDB default charset=utf8;
