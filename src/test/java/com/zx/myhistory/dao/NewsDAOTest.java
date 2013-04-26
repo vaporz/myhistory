@@ -34,6 +34,9 @@ public class NewsDAOTest {
     @Autowired
     private NewsDAO newsDAO;
 
+    @Autowired
+    private UserDAO userDAO;
+
     @Qualifier("jade.dataSource.com.zx.myhistory.dao")
     @Autowired
     private BasicDataSource dataSource;
@@ -161,13 +164,13 @@ public class NewsDAOTest {
 
     @Test
     public void testUser() {
-        long id = newsDAO.getUserId();
-        newsDAO.registerUser(id, "123456", "user1", "", "test@test.com", "zh", System.currentTimeMillis());
-        long userId = newsDAO.getUserIdByName("user1");
+        long id = userDAO.getUserId();
+        userDAO.registerUser(id, "123456", "user1", "", "test@test.com", "zh", System.currentTimeMillis());
+        long userId = userDAO.getUserIdByName("user1");
         Assert.assertEquals(id, userId);
-        userId = newsDAO.getUserIdByNameAndPwd("user1", "123456");
+        userId = userDAO.getUserIdByNameAndPwd("user1", "123456");
         Assert.assertEquals(id, userId);
-        User user = newsDAO.getUserById(id);
+        User user = userDAO.getUserById(id);
         Assert.assertEquals("zh", user.getLocale());
     }
 

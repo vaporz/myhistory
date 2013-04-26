@@ -4,13 +4,13 @@ package com.zx.myhistory.dao;
 import com.zx.myhistory.model.Keyword;
 import com.zx.myhistory.model.Message;
 import com.zx.myhistory.model.News;
-import com.zx.myhistory.model.User;
 import com.zx.myhistory.model.UserKeyword;
 
 import net.paoding.rose.jade.annotation.DAO;
 import net.paoding.rose.jade.annotation.ReturnGeneratedKeys;
 import net.paoding.rose.jade.annotation.SQL;
 import net.paoding.rose.jade.annotation.SQLParam;
+import net.paoding.rose.jade.annotation.ShardBy;
 
 import java.util.List;
 import java.util.Set;
@@ -30,23 +30,23 @@ public interface NewsDAO {
 
     @SQL("INSERT INTO news_keyword (news_id, keyword_id, keyword, keyword_lowercase, create_time)VALUES(:newsId, :keywordId, :keyword, :keywordLowercase, :createTime)"
             + " ON DUPLICATE KEY UPDATE keyword_id=:keywordId")
-    public void insertNewsKeyword(@SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId,
+    public void insertNewsKeyword(@ShardBy @SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId,
         @SQLParam("keyword") String keyword, @SQLParam("keywordLowercase") String keywordLowercase, @SQLParam("createTime") long createTime);
 
     @SQL("INSERT INTO keyword_news (keyword_id, news_id, news_time)VALUES(:keywordId, :newsId, :newsTime)"
             + " ON DUPLICATE KEY UPDATE news_id=:newsId")
-    public void insertKeywordNews(@SQLParam("keywordId") long keywordId, @SQLParam("newsId") long newsId,
+    public void insertKeywordNews(@ShardBy @SQLParam("keywordId") long keywordId, @SQLParam("newsId") long newsId,
         @SQLParam("newsTime") long newsTime);
 
     @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE alias_id=0 ORDER BY hot DESC LIMIT 200")
     public List<Keyword> getKeywords();
 
     @SQL("SELECT news_id, news_time FROM keyword_news WHERE keyword_id=:keywordId AND news_time<:newsTime ORDER BY news_time DESC LIMIT :limit")
-    public List<News> getNewsIdByKeyword(@SQLParam("keywordId") long keywordId, @SQLParam("newsTime") long newsTime,
+    public List<News> getNewsIdByKeyword(@ShardBy @SQLParam("keywordId") long keywordId, @SQLParam("newsTime") long newsTime,
         @SQLParam("limit") int limit);
 
     @SQL("SELECT keyword_id, keyword, keyword_lowercase, create_time FROM news_keyword WHERE news_id=:newsId")
-    public List<Keyword> getKeywordsByNewsId(@SQLParam("newsId") long newsId);
+    public List<Keyword> getKeywordsByNewsId(@ShardBy @SQLParam("newsId") long newsId);
 
     @SQL("SELECT news_id, title, content, url, news_time, truth, fake, create_time FROM news WHERE news_id=:newsId")
     public News getOneNewsById(@SQLParam("newsId") long newsId);
@@ -64,14 +64,14 @@ public interface NewsDAO {
     public Keyword getKeywordById(@SQLParam("keywordId") long keywordId);
 
     @SQL("UPDATE news_keyword SET keyword_id=:targetId, keyword=:keyword, keyword_lowercase=:keywordLowercase WHERE news_id=:newsId AND keyword_id=:keywordId")
-    public void updateKeywordForNewsKeyword(@SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId,
+    public void updateKeywordForNewsKeyword(@ShardBy @SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId,
         @SQLParam("targetId") long targetId, @SQLParam("keyword") String keyword, @SQLParam("keywordLowercase") String keywordLowercase);
 
     @SQL("DELETE FROM news_keyword WHERE news_id=:newsId AND keyword_id=:keywordId")
-    public void deleteNewsFromNewsKeyword(@SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId);
+    public void deleteNewsFromNewsKeyword(@ShardBy @SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId);
 
     @SQL("DELETE FROM keyword_news WHERE keyword_id=:keywordId")
-    public void deleteNewsByKeywordId(@SQLParam("keywordId") long keywordId);
+    public void deleteNewsByKeywordId(@ShardBy @SQLParam("keywordId") long keywordId);
 
     @SQL("UPDATE keyword SET alias_id=:targetId WHERE keyword_id=:keywordId")
     public void aliasKeyword(@SQLParam("keywordId") long duplicatedKeywordId, @SQLParam("targetId") long targetId);
@@ -92,23 +92,6 @@ public interface NewsDAO {
     @SQL("UPDATE news SET fake=fake+:delta WHERE news_id=:newsId")
     public void updateNewsFake(@SQLParam("newsId") long newsId, @SQLParam("delta") int delta);
 
-    @SQL("INSERT INTO user_id_index ()VALUES()")
-    @ReturnGeneratedKeys
-    public Long getUserId();
-
-    @SQL("INSERT INTO user (user_id, pwd, name, icon, email, locale, create_time)VALUES(:userId, :pwd, :name, :icon, :email, :locale, :createTime)")
-    public void registerUser(@SQLParam("userId") long userId, @SQLParam("pwd") String pwd, @SQLParam("name") String name,
-        @SQLParam("icon") String icon, @SQLParam("email") String email, @SQLParam("locale") String locale,
-        @SQLParam("createTime") long createTime);
-
-    @SQL("SELECT user_id FROM user WHERE name=:userName")
-    public Long getUserIdByName(@SQLParam("userName") String userName);
-
-    @SQL("SELECT user_id FROM user WHERE name=:userName AND pwd=:pwd")
-    public Long getUserIdByNameAndPwd(@SQLParam("userName") String userName, @SQLParam("pwd") String pwd);
-
-    @SQL("SELECT user_id, name, icon, email, credit, locale, create_time FROM user WHERE user_id=:userId")
-    public User getUserById(@SQLParam("userId") long userId);
 
     @SQL("INSERT INTO user_keyword (user_id, keyword_id, keyword, last_modify_time)VALUES(:userId, :keywordId, :keyword, :lastModifyTime)")
     public void insertUserKeyword(@SQLParam("userId") long userId, @SQLParam("keywordId") long keywordId,

@@ -10,17 +10,18 @@
 	<context:annotation-config />
 	<context:component-scan base-package="com.zx.myhistory">
 	</context:component-scan>
-	
+
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="messages" />
 	</bean>
 	<bean id="roseLocaleResolver" class="com.zx.myhistory.util.AppLocaleResolver" />
-	
-	<bean id="jade.dataSource.com.zx.myhistory.dao"
-		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+
+	<bean id="jade.dataSource.com.zx.myhistory.dao" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
-		<property name="url" value="jdbc:mysql://${mysql_host}:${mysql_port}/${mysql_db}?useUnicode=true&amp;characterEncoding=utf-8"></property>
+		<property name="url"
+			value="jdbc:mysql://${mysql_host}:${mysql_port}/${mysql_db}?useUnicode=true&amp;characterEncoding=utf-8"></property>
 		<property name="username" value="${mysql_user}"></property>
 		<property name="password" value="${mysql_pwd}"></property>
 		<!-- 运行判断连接超时任务的时间间隔，单位为毫秒，默认为-1，即不执行任务。 -->
@@ -28,7 +29,21 @@
 		<!-- 连接的超时时间，默认为半小时。 -->
 		<property name="minEvictableIdleTimeMillis" value="3600000"></property>
 	</bean>
-
+	<!-- 以下配置为分表设置 -->
+	<bean id="jade.routerInterpreter"
+		class="com.xiaomi.common.service.dal.routing.RewriteSQLInterpreter">
+		<property name="routingConfigurator" ref="jade.routingConfigurator" />
+	</bean>
+	<bean id="jade.routingConfigurator"
+		class="com.xiaomi.common.service.dal.routing.RoutingConfigurator">
+		<property name="partitions">
+			<list>
+				<value>hash:news_keyword:news_id:news_keyword_{0}:100</value>
+				<value>hash:keyword_news:keyword_id:keyword_news_{0}:100</value>
+				<value>hash:news_comment:news_id:news_comment_{0}:100</value>
+			</list>
+		</property>
+	</bean>
 	<!-- bean id="yunshiJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
 		<property name="targetObject"> <ref bean="astroService" /> </property> <property 
 		name="targetMethod"> <value>setNewYunshi</value> </property> </bean> <bean 
