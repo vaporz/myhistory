@@ -30,27 +30,38 @@
 	<div class="control-group">
 		<label class="control-label" for="title">标题</label>
 		<div class="controls">
-		<input class="span5" type="text" id="title" name="title" placeholder="事件标题">
+		<input class="span5" type="text" id="title" value="${title}" name="title" placeholder="事件标题">
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="newTime">事件时间</label>
 		<div class="controls">
-		<input type="text" id="newTime" name="newTime" placeholder="事件发生的时间">
-			<span class="help-block">格式如2010-12-12 23:59:59</span>
+			<div class="row">
+			&nbsp;&nbsp;&nbsp;<input type="radio" name="datetype" id="dateradia" value="exact" checked>精确时间：
+			<input value="${day}" type="text" id="newTime" name="day" class="input-medium" placeholder="年月日：2013-12-12">，<input value="${second}" type="text" name="second" class="input-medium" placeholder="时分秒:23:59:59"/>
+				<span class="help-block">&nbsp;&nbsp;&nbsp;&nbsp;“年月日”必填，请按照输入框内提示的格式填写</span><br>
+			</div>
+			<div class="row">
+			&nbsp;&nbsp;&nbsp;<input type="radio" name="datetype" id="dateradia" value="approximate">大概时间：
+			<input value="${datedesc}" type="text" id="newTime" name="datedesc" class="input-large" placeholder="时间描述，如“2013年春季”">
+			</div>
+			<div>
+			时间插入点：<input value="${timepoint}" type="text" id="newTime" name="timepoint" class="input-large" placeholder="格式如2013-12-12 23:59:59">
+			<span class="help-block">根据“时间描述”选择一个合适的“时间插入点”，<br>“时间插入点”决定了此事件在时间线上的位置</span>
+			</div>
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="keywords">关键字</label>
 		<div class="controls">
-		<input type="text" id="keywords" name="keywords" placeholder="">
+		<input value="${keywords}" type="text" id="keywords" name="keywords" placeholder="">
 			<span class="help-block">用英文逗号间隔</span>
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label" for="content">文本内容</label>
+		<label class="control-label" for="content">事件摘要</label>
 		<div class="controls">
-		<textarea class="input-block-level" id="content" name="content" cols="80" rows="10"></textarea>
+		<textarea class="input-block-level" id="content" name="content" cols="80" rows="10">${content}</textarea>
 		</div>
 	</div>
 	<div class="row-fluid">

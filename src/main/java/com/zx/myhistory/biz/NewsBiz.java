@@ -25,9 +25,9 @@ public class NewsBiz {
     @Autowired
     private NewsDAO newsDAO;
 
-    public long commitNews(String title, String content, String url, long newsTime) {
+    public long commitNews(String title, String content, String url, long newsTime, String newsTimeDesc) {
         long id = newsDAO.getAndIncrId();
-        newsDAO.commitNews(id, title, content, url, newsTime, System.currentTimeMillis());
+        newsDAO.commitNews(id, title, content, url, newsTime, newsTimeDesc, System.currentTimeMillis());
         return id;
     }
 
@@ -38,14 +38,14 @@ public class NewsBiz {
         }
     }
 
-    public void commitKeywordNews(long newsId, long newsTime, Set<Keyword> keywords) {
+    public void commitKeywordNews(long newsId, long newsTime, String newsTimeDesc, Set<Keyword> keywords) {
         for (Keyword keyword : keywords) {
-            newsDAO.insertKeywordNews(keyword.getKeywordId(), newsId, newsTime);
+            newsDAO.insertKeywordNews(keyword.getKeywordId(), newsId, newsTime, newsTimeDesc);
         }
     }
 
-    public void insertKeywordNews(long keywordId, long newsId, long newsTime) {
-        newsDAO.insertKeywordNews(keywordId, newsId, newsTime);
+    public void insertKeywordNews(long keywordId, long newsId, long newsTime, String newsTimeDesc) {
+        newsDAO.insertKeywordNews(keywordId, newsId, newsTime, newsTimeDesc);
     }
 
     public long createKeyword(String keyword) {

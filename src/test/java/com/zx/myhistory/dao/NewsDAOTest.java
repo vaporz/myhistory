@@ -70,7 +70,7 @@ public class NewsDAOTest {
     @Test
     public void testCreateNews() {
         long id = newsDAO.getAndIncrId();
-        newsDAO.commitNews(id, "title", "some content", "", System.currentTimeMillis(), System.currentTimeMillis());
+        newsDAO.commitNews(id, "title", "some content", "", System.currentTimeMillis(), "", System.currentTimeMillis());
         Set<Long> newsIds = new HashSet<Long>();
         newsIds.add(id);
         List<News> news = newsDAO.getNewsByIds(newsIds);
@@ -90,11 +90,11 @@ public class NewsDAOTest {
         long idK2 = newsDAO.getAndIncrId();
         newsTestDAO.insertKeyword(idK2, "BBB", "bbb", "", time);
         long idN1 = newsDAO.getAndIncrId();
-        newsDAO.commitNews(idN1, "news111", "some content", "", time, time);
+        newsDAO.commitNews(idN1, "news111", "some content", "", time, "", time);
         long idN2 = newsDAO.getAndIncrId();
-        newsDAO.commitNews(idN2, "news222", "some content", "", time, time);
+        newsDAO.commitNews(idN2, "news222", "some content", "", time, "", time);
         long idN3 = newsDAO.getAndIncrId();
-        newsDAO.commitNews(idN3, "news333", "some content", "", time, time);
+        newsDAO.commitNews(idN3, "news333", "some content", "", time, "", time);
 
         newsTestDAO.insertKeywordNews(idK1, idN1, time);
         newsTestDAO.insertKeywordNews(idK1, idN2, time);
@@ -149,7 +149,7 @@ public class NewsDAOTest {
     @Test
     public void testTruthFake() {
         long id = newsDAO.getAndIncrId();
-        newsDAO.commitNews(id, "title", "some content", "", System.currentTimeMillis(), System.currentTimeMillis());
+        newsDAO.commitNews(id, "title", "some content", "", System.currentTimeMillis(), "", System.currentTimeMillis());
         newsDAO.updateNewsTruth(id, 10);
         newsDAO.updateNewsFake(id, 20);
         News news = newsDAO.getOneNewsById(id);

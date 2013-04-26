@@ -29,7 +29,8 @@
 		<c:forEach var="item" items="${news}" varStatus="status">
 		<tr>
 			<td style="padding-top:15px">
-			<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${item.newsTime}" />
+			<c:if test="${empty item.newsTimeDesc}"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${item.newsTime}" /></c:if>
+			<c:if test="${!empty item.newsTimeDesc}">${item.newsTimeDesc}</c:if>
 			</td>
 			<td style="padding-top:15px">
 			<a href="/news/${item.newsId}">

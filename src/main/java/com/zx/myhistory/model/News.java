@@ -7,6 +7,7 @@ public class News {
     private String content;
     private String url;
     private long newsTime;
+    private String newsTimeDesc;
     private int truth;
     private int fake;
     private long createTime;
@@ -49,6 +50,14 @@ public class News {
 
     public void setNewsTime(long newsTime) {
         this.newsTime = newsTime;
+    }
+
+    public String getNewsTimeDesc() {
+        return newsTimeDesc;
+    }
+
+    public void setNewsTimeDesc(String newsTimeDesc) {
+        this.newsTimeDesc = newsTimeDesc;
     }
 
     public int getTruth() {

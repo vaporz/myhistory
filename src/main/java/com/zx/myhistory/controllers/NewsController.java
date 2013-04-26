@@ -55,7 +55,7 @@ public class NewsController {
      * 显示事件提交页
      */
     @Get("news/commit")
-    public String showCommitNews(Invocation inv, String msg, String msgType) {
+    public String showCommitNews(Invocation inv, @Param("msg") String msg, @Param("msgType") String msgType) {
         if (StringUtils.isBlank(msg)) {
             msgType = "info";
         } else {
@@ -73,13 +73,48 @@ public class NewsController {
     @Post("news/commit")
     @LoginRequired
     public String commitNews(Invocation inv, @Param("url") String url, @Param("title") String title, @Param("content") String content,
-        @Param("keywords") String keywords, @Param("newTime") String newTimeStr) throws ParseException {
-        Set<String> keywordSet = getKeywordSet(keywords);
-        if (!CollectionUtils.isEmpty(keywordSet)) {
-            long newsTime = format.parse(newTimeStr).getTime();
-            newsService.commitNews(title, content, url, newsTime, keywordSet);
+        @Param("keywords") String keywords, @Param("day") String dayStr, @Param("second") String secondStr,
+        @Param("datedesc") String newsTimeDesc, @Param("timepoint") String timePoint, @Param("datetype") String dateType)
+                                                                                                                         throws ParseException {
+        inv.addModel("url", url);
+        inv.addModel("title", StringUtils.defaultIfBlank(title, ""));
+        inv.addModel("content", StringUtils.defaultIfBlank(content, ""));
+        inv.addModel("keywords", StringUtils.defaultIfBlank(keywords, ""));
+        inv.addModel("day", StringUtils.defaultIfBlank(dayStr, ""));
+        inv.addModel("second", StringUtils.defaultIfBlank(secondStr, ""));
+        inv.addModel("datedesc", StringUtils.defaultIfBlank(newsTimeDesc, ""));
+        inv.addModel("timepoint", StringUtils.defaultIfBlank(timePoint, ""));
+        inv.addModel("datetype", StringUtils.defaultIfBlank(dateType, ""));
+        if (StringUtils.isBlank(title) || StringUtils.isBlank(content) || StringUtils.isBlank(keywords)) {
+            return showCommitNews(inv, "“标题”，“事件摘要”和“关键字”都不能为空", "error");
         }
-        return showCommitNews(inv, "操作成功", "success");
+        String newTimeStr = "";
+        if ("exact".equals(dateType)) {
+            if (StringUtils.isBlank(dayStr)) {
+                return showCommitNews(inv, "“年月日”不能为空", "error");
+            }
+            newTimeStr = dayStr + " " + secondStr;
+            newTimeStr = newTimeStr.replace('：', ':');
+            newsTimeDesc = "";
+        } else if ("approximate".equals(dateType)) {
+            newTimeStr = timePoint;
+            newsTimeDesc = StringUtils.defaultIfBlank(newsTimeDesc, "");
+            if (StringUtils.isBlank(newsTimeDesc)) {
+                return showCommitNews(inv, "时间描述不能为空", "error");
+            }
+        } else {
+            return showCommitNews(inv, "时间输入错误", "error");
+        }
+        try {
+            Set<String> keywordSet = getKeywordSet(keywords);
+            if (!CollectionUtils.isEmpty(keywordSet)) {
+                long newsTime = format.parse(newTimeStr).getTime();
+                newsService.commitNews(title, content, url, newsTime, newsTimeDesc, keywordSet);
+            }
+        } catch (ParseException e) {
+            return showCommitNews(inv, "时间格式输入错误", "error");
+        }
+        return "r:/news/commit?msg=操作成功&msgType=success";
     }
 
     private Set<String> getKeywordSet(String keywords) {

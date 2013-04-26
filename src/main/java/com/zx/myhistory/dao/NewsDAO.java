@@ -20,9 +20,10 @@ public interface NewsDAO {
 
     final String KEYWORD_COLUMNS = " keyword_id, keyword, keyword_lowercase, alias_id, hot, wiki_url, create_time ";
 
-    @SQL("INSERT INTO news (news_id, title, content, url, news_time, create_time)VALUES(:newsId, :title, :content, :url, :newsTime, :createTime)")
+    @SQL("INSERT INTO news (news_id, title, content, url, news_time, news_time_desc, create_time)VALUES(:newsId, :title, :content, :url, :newsTime, :newsTimeDesc, :createTime)")
     public void commitNews(@SQLParam("newsId") long newsId, @SQLParam("title") String title, @SQLParam("content") String content,
-        @SQLParam("url") String url, @SQLParam("newsTime") long newsTime, @SQLParam("createTime") long createTime);
+        @SQLParam("url") String url, @SQLParam("newsTime") long newsTime, @SQLParam("newsTimeDesc") String newsTimeDesc,
+        @SQLParam("createTime") long createTime);
 
     @SQL("INSERT INTO keyword (keyword_id, keyword, keyword_lowercase, wiki_url, create_time)VALUES(:keywordId, :keyword, :keywordLowercase, :wikiUrl, :createTime) ON DUPLICATE KEY UPDATE keyword=:keyword")
     public void insertKeyword(@SQLParam("keywordId") long keywordId, @SQLParam("keyword") String keyword,
@@ -33,22 +34,22 @@ public interface NewsDAO {
     public void insertNewsKeyword(@ShardBy @SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId,
         @SQLParam("keyword") String keyword, @SQLParam("keywordLowercase") String keywordLowercase, @SQLParam("createTime") long createTime);
 
-    @SQL("INSERT INTO keyword_news (keyword_id, news_id, news_time)VALUES(:keywordId, :newsId, :newsTime)"
+    @SQL("INSERT INTO keyword_news (keyword_id, news_id, news_time, news_time_desc)VALUES(:keywordId, :newsId, :newsTime, :newsTimeDesc)"
             + " ON DUPLICATE KEY UPDATE news_id=:newsId")
     public void insertKeywordNews(@ShardBy @SQLParam("keywordId") long keywordId, @SQLParam("newsId") long newsId,
-        @SQLParam("newsTime") long newsTime);
+        @SQLParam("newsTime") long newsTime, @SQLParam("newsTimeDesc") String newsTimeDesc);
 
     @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE alias_id=0 ORDER BY hot DESC LIMIT 200")
     public List<Keyword> getKeywords();
 
-    @SQL("SELECT news_id, news_time FROM keyword_news WHERE keyword_id=:keywordId AND news_time<:newsTime ORDER BY news_time DESC LIMIT :limit")
+    @SQL("SELECT news_id, news_time, news_time_desc FROM keyword_news WHERE keyword_id=:keywordId AND news_time<:newsTime ORDER BY news_time DESC LIMIT :limit")
     public List<News> getNewsIdByKeyword(@ShardBy @SQLParam("keywordId") long keywordId, @SQLParam("newsTime") long newsTime,
         @SQLParam("limit") int limit);
 
     @SQL("SELECT keyword_id, keyword, keyword_lowercase, create_time FROM news_keyword WHERE news_id=:newsId")
     public List<Keyword> getKeywordsByNewsId(@ShardBy @SQLParam("newsId") long newsId);
 
-    @SQL("SELECT news_id, title, content, url, news_time, truth, fake, create_time FROM news WHERE news_id=:newsId")
+    @SQL("SELECT news_id, title, content, url, news_time, news_time_desc, truth, fake, create_time FROM news WHERE news_id=:newsId")
     public News getOneNewsById(@SQLParam("newsId") long newsId);
 
     @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE keyword_lowercase IN (:keywords)")
@@ -57,7 +58,7 @@ public interface NewsDAO {
     @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE keyword_lowercase=:keywordLowercase")
     public Keyword getKeywordByName(@SQLParam("keywordLowercase") String keywordLowercase);
 
-    @SQL("SELECT news_id, title, content, url, news_time, truth, fake, create_time FROM news WHERE news_id IN (:newsIds) ORDER BY news_time DESC")
+    @SQL("SELECT news_id, title, content, url, news_time, news_time_desc, truth, fake, create_time FROM news WHERE news_id IN (:newsIds) ORDER BY news_time DESC")
     public List<News> getNewsByIds(@SQLParam("newsIds") Set<Long> newsIds);
 
     @SQL("SELECT " + KEYWORD_COLUMNS + " FROM keyword WHERE keyword_id=:keywordId")
@@ -91,7 +92,6 @@ public interface NewsDAO {
 
     @SQL("UPDATE news SET fake=fake+:delta WHERE news_id=:newsId")
     public void updateNewsFake(@SQLParam("newsId") long newsId, @SQLParam("delta") int delta);
-
 
     @SQL("INSERT INTO user_keyword (user_id, keyword_id, keyword, last_modify_time)VALUES(:userId, :keywordId, :keyword, :lastModifyTime)")
     public void insertUserKeyword(@SQLParam("userId") long userId, @SQLParam("keywordId") long keywordId,

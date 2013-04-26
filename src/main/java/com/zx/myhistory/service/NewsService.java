@@ -28,10 +28,10 @@ public class NewsService {
     @Autowired
     private NewsBiz newsBiz;
 
-    public void commitNews(String title, String content, String url, long newsTime, Set<String> keywordStrSet) {
+    public void commitNews(String title, String content, String url, long newsTime, String newsTimeDesc, Set<String> keywordStrSet) {
         url = StringUtils.defaultString(url);
-        long newsId = newsBiz.commitNews(title, content, url, newsTime);
-        attachKeywordsForNews(newsId, newsTime, keywordStrSet);
+        long newsId = newsBiz.commitNews(title, content, url, newsTime, newsTimeDesc);
+        attachKeywordsForNews(newsId, newsTime, newsTimeDesc, keywordStrSet);
     }
 
     public List<Keyword> getKeywords() {
@@ -68,10 +68,10 @@ public class NewsService {
 
     public void attachKeywordsForNews(long newsId, Set<String> keywordStrSet) {
         News news = newsBiz.getOneNewsById(newsId);
-        attachKeywordsForNews(newsId, news.getNewsTime(), keywordStrSet);
+        attachKeywordsForNews(newsId, news.getNewsTime(), news.getNewsTimeDesc(), keywordStrSet);
     }
 
-    private void attachKeywordsForNews(long newsId, long newsTime, Set<String> keywordStrSet) {
+    private void attachKeywordsForNews(long newsId, long newsTime, String newsTimeDesc, Set<String> keywordStrSet) {
         Set<Keyword> keywordSet = getKeywords(keywordStrSet, true);
         Map<String, Keyword> trueMap = new HashMap<String, Keyword>();
         if (keywordSet != null) {
@@ -88,7 +88,7 @@ public class NewsService {
         Set<Keyword> trueKeywordSet = new HashSet<Keyword>();
         CollectionUtils.addAll(trueKeywordSet, trueMap.values().iterator());
         // TODO 有并发的问题，如果有关键字在执行过程中被alias？
-        newsBiz.commitKeywordNews(newsId, newsTime, trueKeywordSet);
+        newsBiz.commitKeywordNews(newsId, newsTime, newsTimeDesc, trueKeywordSet);
         newsBiz.commitNewsKeyword(newsId, trueKeywordSet);
         // 通知关键字更新
         notifyFollowers(trueKeywordSet);
@@ -160,7 +160,7 @@ public class NewsService {
         for (News item : newsTobeUpdated) {
             newsBiz.updateKeywordForNewsKeyword(item.getNewsId(), keywordObj.getKeywordId(), targetObj.getKeywordId(),
                 targetObj.getKeyword(), targetObj.getKeywordLowercase());
-            newsBiz.insertKeywordNews(targetObj.getKeywordId(), item.getNewsId(), item.getNewsTime());
+            newsBiz.insertKeywordNews(targetObj.getKeywordId(), item.getNewsId(), item.getNewsTime(), item.getNewsTimeDesc());
         }
         // TODO 将关注了老keyword的用户转移到新keyword上，批量修改数据库
         newsBiz.deleteNewsByKeywordId(keywordObj.getKeywordId());
