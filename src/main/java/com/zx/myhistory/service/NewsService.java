@@ -230,4 +230,16 @@ public class NewsService {
     public List<Message> getMessages(long msgId, int limit) {
         return newsBiz.getMessages(msgId, limit);
     }
+
+    public void updateNewsContent(long newsId, String title, String content, String url, long newsTime, String newsTimeDesc) {
+        newsBiz.updateNewsContent(newsId, title, content, url, newsTime, newsTimeDesc);
+    }
+
+    public void deleteKeywordFromNews(long newsId, long keywordId){
+        newsBiz.deleteNewsFromNewsKeyword(newsId, keywordId);
+    }
+
+    public void deleteNewsFromKeyword(long newsId, long keywordId) {
+        newsBiz.deleteKeywordFromKeywordNews(keywordId, newsId);
+    }
 }

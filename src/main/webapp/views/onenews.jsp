@@ -26,6 +26,11 @@
 			</a>
 			</div>
 		</div>
+		<c:if test="${!empty host}">
+		<div class="row">
+			[<a href="/news/${news.newsId}/edit/content">编辑事件</a>][<a href="/news/${news.newsId}/edit/keyword">编辑关键字</a>]
+		</div>
+		</c:if>
 		<br>
 		<div class="row">
 			<div class="span2">
@@ -55,16 +60,6 @@
 			</div>
 		</div>
 	<hr>
-		<form method="post" action="/news/${news.newsId}/keywords">
-		<div class="row">
-			<div class="span2">
-				<input class="input-medium" type="text" name="keywords" />
-			</div>
-			<div class="span2">
-				<input class="btn btn-primary" type="submit" value="添加关键字">
-			</div>
-		</div>
-		</form>
 		<h4>评论</h4>
 		<c:forEach var="item" items="${comments}" varStatus="status">
 			<div>
@@ -84,7 +79,8 @@
 				<c:if test="${empty host}"><input class="input-medium" type="text" name="userName"/></c:if>
 			</div>
 			<div>
-				内容：<input class="input-medium" type="text" name="content" />
+				内容：
+				<textarea id="content" name="content" cols="50" rows="5"></textarea>
 			</div>
 			<div>
 				<input class="btn btn-primary" type="submit" value="评论">

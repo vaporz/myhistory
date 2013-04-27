@@ -71,6 +71,9 @@ public interface NewsDAO {
     @SQL("DELETE FROM news_keyword WHERE news_id=:newsId AND keyword_id=:keywordId")
     public void deleteNewsFromNewsKeyword(@ShardBy @SQLParam("newsId") long newsId, @SQLParam("keywordId") long keywordId);
 
+    @SQL("DELETE FROM keyword_news WHERE news_id=:newsId AND keyword_id=:keywordId")
+    public void deleteKeywordFromKeywordNews(@ShardBy @SQLParam("keywordId") long keywordId, @SQLParam("newsId") long newsId);
+
     @SQL("DELETE FROM keyword_news WHERE keyword_id=:keywordId")
     public void deleteNewsByKeywordId(@ShardBy @SQLParam("keywordId") long keywordId);
 
@@ -130,4 +133,8 @@ public interface NewsDAO {
 
     @SQL("SELECT msg_id, user_id, user_name, content, create_time FROM message_board WHERE msg_id<:msgId LIMIT :limit")
     public List<Message> getMessages(@SQLParam("msgId") long msgId, @SQLParam("limit") int limit);
+
+    @SQL("UPDATE news SET title=:title,content=:content,url=:url,news_time=:newsTime,news_time_desc=:newsTimeDesc WHERE news_id=:newsId")
+    public void updateNewsContent(@SQLParam("newsId") long newsId, @SQLParam("title") String title, @SQLParam("content") String content,
+        @SQLParam("url") String url, @SQLParam("newsTime") long newsTime, @SQLParam("newsTimeDesc") String newsTimeDesc);
 }

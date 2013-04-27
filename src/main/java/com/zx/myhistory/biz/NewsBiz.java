@@ -198,4 +198,12 @@ public class NewsBiz {
         msgId = msgId <= 0 ? Long.MAX_VALUE : msgId;
         return newsDAO.getMessages(msgId, limit);
     }
+
+    public void updateNewsContent(long newsId, String title, String content, String url, long newsTime, String newsTimeDesc) {
+        newsDAO.updateNewsContent(newsId, title, content, url, newsTime, newsTimeDesc);
+    }
+
+    public void deleteKeywordFromKeywordNews(long keywordId, long newsId) {
+        newsDAO.deleteKeywordFromKeywordNews(keywordId, newsId);
+    }
 }

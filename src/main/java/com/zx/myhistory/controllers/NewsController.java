@@ -28,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,7 +82,7 @@ public class NewsController {
         inv.addModel("content", StringUtils.defaultIfBlank(content, ""));
         inv.addModel("keywords", StringUtils.defaultIfBlank(keywords, ""));
         inv.addModel("day", StringUtils.defaultIfBlank(dayStr, ""));
-        inv.addModel("second", StringUtils.defaultIfBlank(secondStr, ""));
+        inv.addModel("second", StringUtils.defaultIfBlank(secondStr, "00:00:00"));
         inv.addModel("datedesc", StringUtils.defaultIfBlank(newsTimeDesc, ""));
         inv.addModel("timepoint", StringUtils.defaultIfBlank(timePoint, ""));
         inv.addModel("datetype", StringUtils.defaultIfBlank(dateType, ""));
@@ -209,7 +210,7 @@ public class NewsController {
         if (!CollectionUtils.isEmpty(keywordSet)) {
             newsService.attachKeywordsForNews(newsId, keywordSet);
         }
-        return "r:/news/" + newsId;
+        return "r:/news/" + newsId + "/edit/keyword";
     }
 
     @Get("keyword/merge")
@@ -323,5 +324,79 @@ public class NewsController {
         inv.addModel("messages", list);
         inv.addModel("active", "message");
         return "messageboard";
+    }
+
+    @Get("news/{newsId:[0-9]+}/edit/content")
+    @LoginRequired
+    public String showEditNewsContent(Invocation inv, @Param("newsId") long newsId, @Param("msg") String msg,
+        @Param("msgType") String msgType) {
+        if (StringUtils.isBlank(msg)) {
+            msgType = "info";
+        } else {
+            msgType = StringUtils.defaultString(msgType, "success");
+        }
+        News news = newsService.getOneNewsById(newsId);
+        long newsTime = news.getNewsTime();
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(newsTime);
+        String newsTimeStr = format.format(cal.getTime());
+        inv.addModel("newsTimeStr", newsTimeStr);
+        inv.addModel("news", news);
+        inv.addModel("msg", StringUtils.defaultString(msg));
+        inv.addModel("active", "keywords");
+        inv.addModel("msgType", msgType);
+        return "editnewscontent";
+    }
+
+    @Post("news/{newsId:[0-9]+}/edit/content")
+    @LoginRequired
+    public String editNewsContent(Invocation inv, @Param("newsId") long newsId, @Param("url") String url, @Param("title") String title,
+        @Param("content") String content, @Param("day") String dayStr, @Param("second") String secondStr,
+        @Param("datedesc") String newsTimeDesc, @Param("timepoint") String timePoint, @Param("datetype") String dateType) {
+        if (StringUtils.isBlank(title) || StringUtils.isBlank(content)) {
+            return "r:/news/" + newsId + "/edit/content?msg=“标题”和“事件摘要”都不能为空&msgType=error";
+        }
+        url = StringUtils.defaultString(url);
+        String newTimeStr = "";
+        if ("exact".equals(dateType)) {
+            if (StringUtils.isBlank(dayStr)) {
+                return "r:/news/" + newsId + "/edit/content?msg=“年月日”不能为空&msgType=error";
+            }
+            newTimeStr = dayStr + " " + secondStr;
+            newTimeStr = newTimeStr.replace('：', ':');
+            newsTimeDesc = "";
+        } else if ("approximate".equals(dateType)) {
+            newTimeStr = timePoint;
+            newsTimeDesc = StringUtils.defaultIfBlank(newsTimeDesc, "");
+            if (StringUtils.isBlank(newsTimeDesc)) {
+                return "r:/news/" + newsId + "/edit/content?msg=时间描述不能为空&msgType=error";
+            }
+        } else {
+            return "r:/news/" + newsId + "/edit/content?msg=时间输入错误&msgType=error";
+        }
+        try {
+            long newsTime = format.parse(newTimeStr).getTime();
+            newsService.updateNewsContent(newsId, title, content, url, newsTime, newsTimeDesc);
+        } catch (ParseException e) {
+            return "r:/news/" + newsId + "/edit/content?msg=时间输入错误&msgType=error";
+        }
+        return "r:/news/" + newsId;
+    }
+
+    @Get("news/{newsId:[0-9]+}/edit/keyword")
+    @LoginRequired
+    public String showEditNewsKeywords(Invocation inv, @Param("newsId") long newsId) {
+        List<Keyword> keywords = newsService.getKeywordsByNewsId(newsId);
+        inv.addModel("keywords", keywords);
+        inv.addModel("newsId", newsId);
+        return "editnewskeyword";
+    }
+
+    @Get("news/{newsId:[0-9]+}/edit/keyword/{keywordId:[0-9]+}/delete")
+    @LoginRequired
+    public String deleteKeyword(Invocation inv, @Param("newsId") long newsId, @Param("keywordId") long keywordId) {
+        newsService.deleteKeywordFromNews(newsId, keywordId);
+        newsService.deleteNewsFromKeyword(newsId, keywordId);
+        return "r:/news/" + newsId + "/edit/keyword";
     }
 }

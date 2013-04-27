@@ -13,7 +13,7 @@
   <%@ include file="header.jsp" %>
 <div class="container">
 <div class="offset1">
-<h2>按热度排序</h2>
+<h4>按热度排序</h4>
 <ul>
 <c:forEach var="item" items="${keywords}" varStatus="status">
 <li class="line-height: 24px">
