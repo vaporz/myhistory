@@ -23,8 +23,9 @@
 <input type="text" name="name"  class="input-block-level"/>
 密码：
 <input type="password" name="pwd"  class="input-block-level"/>
-<div class="pull-right">
-<button class="btn btmn-large btn-primary" type="submit">登录</button>
+<div class="row pull-right">
+<button class="btn btmn-large btn-primary" type="submit">登录</button>   
+<a href="/register" class="btn btn-primary">注册</a>
 </div>
 </form>
 </div>

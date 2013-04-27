@@ -14,7 +14,13 @@
 <div class="container row-fliud">
   <div class="span8 offset1">
   <form method="post" action="/news/commit" class="form-horizontal">
-	<c:if test="${!empty msg}">
+	<c:if test="${empty host && empty msg}">
+		<div class="span4 offset2 alert alert-warn">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			请<a href="/login">登陆</a>后再进行提交
+		</div>
+	</c:if>
+	<c:if test="${!empty host&&! empty msg}">
 		<div class="span4 offset2 alert alert-${msgType}">
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
 			${msg}
